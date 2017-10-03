@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+source ./longboat/defaults.cfg || exit 128
+source ./longboat.cfg || exit 128
+
+# Longboat
+echo "===> Updating Longboat tools to latest version..."
+cd longboat/
+git stash --quiet
+git pull --quiet
+cd ../
+
+# Roles
+if [ -d roles ]; then
+  echo "===> Updating Longboat Roles to latest version..."
+  cd roles/
+  git stash --quiet
+  git pull --quiet
+  cd ../
+else
+  echo "===> Downloading Longboat Roles for the first time..."
+  git clone --quiet ${LONGBOAT_ROLES_REPO}
+fi
+
+# Gitignore
+echo "===> Deploy .gitignore file"
+cp longboat/files/gitignore ./.gitignore
+
+# Inventories
+# FIXME: Deploy inventories
+#URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/environment/all"
+#curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"
+
+# Playbooks
+# FIXME: Deploy playbook(s)
+
