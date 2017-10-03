@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+source ./longboat/defaults.cfg
+if [ $? -gt 0 ]; then
+  echo "ERROR: You should run this from parent directory, ie. run: longboat/setup"
+  exit 128
+fi
+
+if [ -f "longboat.cfg" ]; then
+  echo "===> Found longboat.cfg file, skipping interactive setup."
+else
+  echo "===> Longboat requires an API token. If you don't have one, get it"
+  echo "===> from: https://longboat.io/settings/api/list"
+  echo ""
+  echo -n "Longboat API Token: "
+  read TOKEN
+
+  echo "===> Writing configuration file longboat.cfg"
+  echo "# Longboat API Configuration" > longboat.cfg
+  echo "LONGBOAT_TOKEN=\"${TOKEN}\"" >> longboat.cfg
+fi
+
+echo "===> Running longboat/update building the directory structure."
+./longboat/update
+
+if [ -d ".git" ]; then
+  echo "===> Found .git directory, skipping Git repository initialize."
+else
+  echo "===> Initializing Git repository..."
+  git init --quiet
+fi
+
+echo "===> Running longboat/doctor to verify everything..."
+./longboat/doctor
+

@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+
+RED="\033[0;31m"
+GREEN="\033[0;32m"
+NC="\033[0m"
+FOUNDERROR="false"
+
+headline() {
+  echo ""
+  echo "===> $1"
+  echo ""
+}
+
+error() {
+  echo -e "[${RED}ERROR${NC}] $1"
+  FOUNDERROR="true"
+}
+
+ok() {
+  echo -e "   [${GREEN}OK${NC}] $1"
+}
+
+space() {
+  echo -e "        $1"
+}
+
+headline "Software Requirements"
+
+# Curl
+command -v curl > /dev/null
+if [ $? -eq 0 ]; then
+  ok "curl is installed."
+else
+  error "curl command not found!"
+  space "Read more on FIXME: Link to docs"
+fi
+
+# Ansible Playbook
+ANSIBLE_VERSION=`ansible-playbook --version &> /dev/null`
+if [ $? -eq 0 ]; then
+  ok "ansible is installed."
+else
+  error "ansible-playbook command not found!"
+  space "Please install Ansible: FIXME: Link to docs"
+fi
+
+ANSIBLE_VERSION=`ansible-playbook --version | head -1 | awk '{print $2}' | tr "." " " | awk '{print $1}'`
+if [ "${ANSIBLE_VERSION}" == "1" ]; then
+  error "ansible version 1.x is not supported"
+else
+  ok "ansible version is 2.x or above"
+fi
+
+headline "Local Longboat Setup"
+
+# Longboat configuration
+if [ -f longboat.cfg ]; then
+  ok "Local Longboat configuration found."
+else
+  error "Local Longboat configuration file not found!"
+  space "You might need to run longboat/setup - FIXME: Link to docs"
+fi
+
+# Longboat roles
+if [ -d roles ]; then
+  ok "Longboat roles found."
+else
+  error "Longboat roles not found!"
+  space "You might need to run longboat/setup - FIXME: Link to docs"
+fi
+
+# Test API Request
+source ./longboat/defaults.cfg || error "Could not load longboat/default.cfg"
+source ./longboat.cfg || error "Could not load longboat.cfg"
+URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/ping"
+PING=`curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
+if [ "${PING}" == "pong" ]; then
+  ok "Longboat API Test"
+else
+  error "Longboat API did not respond correctly - error was:"
+  space "${PING}"
+  space "Read more: FIXME: Link to docs"
+fi
+
+headline "The Doctor's Conclusion"
+
+if [ "${FOUNDERROR}" == "true" ]; then
+  error "Unfortunately errors was found :("
+  space "Please follow the documentation links for more information."
+  exit 1
+fi
+
+ok "No errors \o/"
+echo ""
+exit 0
+
