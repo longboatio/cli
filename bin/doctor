@@ -48,17 +48,24 @@ ANSIBLE_VERSION=`ansible-playbook --version | head -1 | awk '{print $2}' | tr ".
 if [ "${ANSIBLE_VERSION}" == "1" ]; then
   error "ansible version 1.x is not supported"
 else
-  ok "ansible version is 2.x or above"
+  ok "ansible version is 2.x or above."
 fi
 
-headline "Local Longboat Setup"
+headline "Longboat Project"
 
 # Longboat configuration
 if [ -f longboat.cfg ]; then
   ok "Local Longboat configuration found."
+  source ./longboat.cfg
 else
   error "Local Longboat configuration file not found!"
-  space "You might need to run longboat/setup - FIXME: Link to docs"
+  space "You might need to run 'boat setup' - FIXME: Link to docs"
+fi
+
+# API Token
+if [ -z "${LONGBOAT_TOKEN}" ]; then
+  error "Config LONGBOAT_TOKEN not found!"
+  space "You might need to run 'boat setup' - FIXME: Link to docs"
 fi
 
 # Longboat roles
@@ -66,16 +73,14 @@ if [ -d roles ]; then
   ok "Longboat roles found."
 else
   error "Longboat roles not found!"
-  space "You might need to run longboat/setup - FIXME: Link to docs"
+  space "You might need to run 'boat/setup' - FIXME: Link to docs"
 fi
 
 # Test API Request
-source ./longboat/defaults.cfg || error "Could not load longboat/default.cfg"
-source ./longboat.cfg || error "Could not load longboat.cfg"
 URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/ping"
 PING=`curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
 if [ "${PING}" == "pong" ]; then
-  ok "Longboat API Test"
+  ok "Longboat API Test."
 else
   error "Longboat API did not respond correctly - error was:"
   space "${PING}"

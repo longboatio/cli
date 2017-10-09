@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+COMMAND="$1"
+
+BOATDIR=`dirname $0`
+PROJECTDIR=`pwd`
+
+# Default Longboat configuration
+source ${BOATDIR}/etc/defaults.cfg || error "Could not load ${BOATDIR}/etc/defaults.cfg"
+
+# Project configuration
+if [ -f "${PROJECTDIR}/longboat.cfg" ]; then
+  source ${PROJECTDIR}/longboat.cfg
+fi
+
+help_briefly() {
+  echo "Usage: boat <command> [<args>]"
+  echo ""
+  echo "  init      Initialize a new Longboat project"
+  echo "  update    Update project"
+  echo "  doctor    Check Longboat installation and project"
+  echo ""
+  echo "More information in the online documentation:"
+  echo "${LONGBOAT_DOCS}"
+  echo ""
+}
+
+# No arguments, display help
+if [ -z "${COMMAND}" ]; then
+  help_briefly
+  exit 1
+fi
+
+case "${COMMAND}" in
+"help")
+  help_briefly
+  exit 0
+  ;;
+"init")
+  source ${BOATDIR}/bin/init || exit $?
+  source ${BOATDIR}/bin/update || exit $?
+  source ${BOATDIR}/bin/doctor || exit $?
+  exit 0
+  ;;
+"update")
+  source ${BOATDIR}/bin/update
+  exit $?
+  ;;
+"doctor")
+  source ${BOATDIR}/bin/doctor
+  exit $?
+  ;;
+*)
+  echo "ERROR! Unknown command. Try 'boat help' or the online documentation"
+  echo "       for more information: ${LONGBOAT_DOCS}"
+  exit 1
+  ;;
+esac

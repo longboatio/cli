@@ -1,30 +1,26 @@
 #!/usr/bin/env bash
 
-source ./longboat/defaults.cfg || exit 128
-source ./longboat.cfg || exit 128
+if [ ! -f "longboat.cfg" ]; then
+  echo "ERROR! No longboat.cfg found in: ${PROJECTDIR}"
+  exit 1
+fi
 
-# Longboat
-echo "===> Updating Longboat tools to latest version..."
-cd longboat/
-git stash --quiet
-git pull --quiet
-cd ../
-
-# Roles
-if [ -d roles ]; then
-  echo "===> Updating Longboat Roles to latest version..."
+if [ -d "roles" ]; then
+  echo "===> Updating Longboat roles..."
   cd roles/
   git stash --quiet
   git pull --quiet
-  cd ../
+  cd ..
 else
   echo "===> Downloading Longboat Roles for the first time..."
   git clone --quiet ${LONGBOAT_ROLES_REPO}
 fi
 
 # Gitignore
-echo "===> Deploy .gitignore file"
-cp longboat/files/gitignore ./.gitignore
+echo "===> Updating .gitignore file..."
+cp ${BOATDIR}/files/gitignore .gitignore
+git add .gitignore
+git commit --quiet -m "Updating .gitignore"
 
 # Inventories
 # FIXME: Deploy inventories
@@ -33,4 +29,3 @@ cp longboat/files/gitignore ./.gitignore
 
 # Playbooks
 # FIXME: Deploy playbook(s)
-
