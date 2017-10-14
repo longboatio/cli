@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [ -z "${ARGUMENT}" ]; then
+  echo "ERROR: Missing environment argument"
+  echo "  ie.: boat inventory production"
+  echo "Read more FIXME: Link to documentation" 
+  exit 1
+fi
+
+# FIXME: Add feature of local cache file
+
+URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/ansible/inventory/${ARGUMENT}"
+curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"
+
