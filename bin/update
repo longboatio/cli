@@ -19,13 +19,21 @@ fi
 # Gitignore
 echo "===> Updating .gitignore file..."
 cp ${BOATDIR}/files/gitignore .gitignore
-git add .gitignore
-git commit --quiet -m "Updating .gitignore"
 
 # Inventories
-# FIXME: Deploy inventories
-#URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/environment/all"
-#curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"
+echo "===> Updating environments..."
+URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/config/environments"
+ENVIRONMENTS=`curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
+if [ $? -eq 0 ]; then
+  for ENVIRONMENT in ${ENVIRONMENTS}; do
+    echo "#!/bin/sh" > ${PROJECTDIR}/${ENVIRONMENT}
+    echo "${BOATDIR}/boat inventory ${ENVIRONMENT}" >> ${PROJECTDIR}/${ENVIRONMENT}
+    chmod 755 ${PROJECTDIR}/${ENVIRONMENT}
+  done
+else
+  echo "ERROR: Could not get environments!"
+  echo "       Try running 'boat doctor' to test that API works."
+fi
 
 # Playbooks
 # FIXME: Deploy playbook(s)

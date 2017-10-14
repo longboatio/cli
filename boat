@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 COMMAND="$1"
+ARGUMENT="$2"
 
 BOATDIR=`dirname $0`
 PROJECTDIR=`pwd`
@@ -17,7 +18,7 @@ help_briefly() {
   echo "Usage: boat <command> [<args>]"
   echo ""
   echo "  init      Initialize a new Longboat project"
-  echo "  update    Update project"
+  echo "  update    Update project with latest config"
   echo "  doctor    Check Longboat installation and project"
   echo ""
   echo "More information in the online documentation:"
@@ -48,6 +49,10 @@ case "${COMMAND}" in
   ;;
 "doctor")
   source ${BOATDIR}/bin/doctor
+  exit $?
+  ;;
+"inventory")
+  source ${BOATDIR}/bin/inventory
   exit $?
   ;;
 *)
