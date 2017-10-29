@@ -2,6 +2,8 @@
 
 RED="\033[0;31m"
 GREEN="\033[0;32m"
+BLUE="\033[0;34m"
+PURPLE="\033[0;35m"
 NC="\033[0m"
 FOUNDERROR="false"
 
@@ -14,6 +16,10 @@ headline() {
 error() {
   echo -e "[${RED}ERROR${NC}] $1"
   FOUNDERROR="true"
+}
+
+info() {
+  echo -e " [${BLUE}INFO${NC}] $1"
 }
 
 ok() {
@@ -29,21 +35,31 @@ headline "Software Requirements"
 # Curl
 command -v curl > /dev/null
 if [ $? -eq 0 ]; then
-  ok "curl is installed."
+  ok "curl is installed"
 else
   error "curl command not found!"
   space "Read more on FIXME: Link to docs"
 fi
 
-# Ansible Playbook
-ANSIBLE_VERSION=`ansible-playbook --version &> /dev/null`
+# Git
+command -v git > /dev/null
 if [ $? -eq 0 ]; then
-  ok "ansible is installed."
+  ok "git is installed"
+else
+  error "git command not found!"
+  space "Please install Git: FIXME: Link to docs"
+fi
+
+# Ansible Playbook
+command -v ansible-playbook > /dev/null
+if [ $? -eq 0 ]; then
+  ok "ansible is installed"
 else
   error "ansible-playbook command not found!"
   space "Please install Ansible: FIXME: Link to docs"
 fi
 
+# Ansible Version
 ANSIBLE_VERSION=`ansible-playbook --version | head -1 | awk '{print $2}' | tr "." " " | awk '{print $1}'`
 if [ "${ANSIBLE_VERSION}" == "1" ]; then
   error "ansible version 1.x is not supported"
@@ -51,40 +67,74 @@ else
   ok "ansible version is 2.x or above."
 fi
 
+headline "Longboat User"
+
+# User configuration
+if [ -f "${HOME}/.longboat.cfg" ]; then
+  ok "Config file found: ${HOME}/.longboat.cfg"
+
+  # API Token
+  if [ -z "${LONGBOAT_TOKEN}" ]; then
+    error "LONGBOAT_TOKEN not found!"
+    space "You might need to run 'boat auth' - FIXME: Link to docs"
+  else
+    ok "LONGBOAT_TOKEN found!"
+  fi
+
+  # Test API User Request
+  URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/user"
+  PING=`curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
+  if [ $? -eq 0 ]; then
+    ok "API test - user: ${PURPLE}${PING}${NC}"
+  else
+    error "Longboat API did not respond correctly - error was:"
+    space "${PING}"
+    space "Read more: FIXME: Link to docs"
+  fi
+
+else
+  error "Longboat user config not found in ${HOME}/.longboat.cfg"
+  space "You won't be able to authenticate with Longboat"
+  space "More information: FIXME: Link to docs"
+fi
+
 headline "Longboat Project"
 
-# Longboat configuration
-if [ -f longboat.cfg ]; then
-  ok "Local Longboat configuration found."
-  source ./longboat.cfg
-else
-  error "Local Longboat configuration file not found!"
-  space "You might need to run 'boat setup' - FIXME: Link to docs"
-fi
+# Project configuration
+if [ -f ./longboat.cfg ]; then
+  ok "Project config file found: ./longboat.cfg"
 
-# API Token
-if [ -z "${LONGBOAT_TOKEN}" ]; then
-  error "Config LONGBOAT_TOKEN not found!"
-  space "You might need to run 'boat setup' - FIXME: Link to docs"
-fi
+  # API Project
+  if [ -z "${LONGBOAT_PROJECT}" ]; then
+    error "LONGBOAT_PROJECT not found!"
+    space "You might need to run 'boat ???' - FIXME: Link to docs"
+  else
+    ok "LONGBOAT_PROJECT is: ${PURPLE}${LONGBOAT_PROJECT}${NC}"
+  fi
 
-# Longboat roles
-if [ -d roles ]; then
-  ok "Longboat roles found."
-else
-  error "Longboat roles not found!"
-  space "You might need to run 'boat/setup' - FIXME: Link to docs"
-fi
+  # Test API Project Request
+  URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/project/${LONGBOAT_PROJECT}"
+  PING=`curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
+  if [ $? -eq 0 ]; then
+    ok "API test - description: ${PURPLE}${PING}${NC}"
+  else
+    error "Longboat API did not respond correctly - error was:"
+    space "${PING}"
+    space "Read more: FIXME: Link to docs"
+  fi
 
-# Test API Request
-URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/ping"
-PING=`curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
-if [ "${PING}" == "pong" ]; then
-  ok "Longboat API Test."
+  # Longboat roles
+  if [ -d roles ]; then
+    ok "Longboat roles found."
+  else
+    error "Longboat roles not found!"
+    space "You might need to run 'boat/setup' - FIXME: Link to docs"
+  fi
+
 else
-  error "Longboat API did not respond correctly - error was:"
-  space "${PING}"
-  space "Read more: FIXME: Link to docs"
+  info "Project config not found in ./longboat.cfg"
+  space "Skipping project tests."
+  space "More information: FIXME: Link to documentation"
 fi
 
 headline "The Doctor's Conclusion"
