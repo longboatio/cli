@@ -7,6 +7,8 @@ else
   git init --quiet
 fi
 
+# FIXME: Tokens is personal and should be set elsewhere
+
 if [ -f "longboat.cfg" ]; then
   echo "===> Found longboat.cfg file, skipping interactive setup."
 else
@@ -23,3 +25,4 @@ else
   git add longboat.cfg
   git commit --quiet -m "Adding initial longboat.cfg"
 fi
+
