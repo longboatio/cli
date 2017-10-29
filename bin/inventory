@@ -9,6 +9,6 @@ fi
 
 # FIXME: Add feature of local cache file
 
-URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/ansible/inventory/${ARGUMENT}"
-curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"
+URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/ansible/inventory/${LONGBOAT_PROJECT}/${ARGUMENT}"
+curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"
 
