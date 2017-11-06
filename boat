@@ -6,6 +6,9 @@ ARGUMENT="$2"
 BOATDIR=`dirname $0`
 PROJECTDIR=`pwd`
 
+# Subroutines
+source ${BOATDIR}/lib/subroutines || error "Could not load ${BOATDIR}/lib/subroutines"
+
 # Default Longboat configuration
 source ${BOATDIR}/etc/defaults.cfg || error "Could not load ${BOATDIR}/etc/defaults.cfg"
 
@@ -19,31 +22,23 @@ if [ -f "${PROJECTDIR}/longboat.cfg" ]; then
   source ${PROJECTDIR}/longboat.cfg
 fi
 
-help_briefly() {
+if [ -z "${COMMAND}" ]; then
   echo "Usage: boat <command> [<args>]"
   echo ""
   echo "    init          Initialize a new Longboat project"
   echo "    update        Update project with latest config"
   echo "    doctor        Check Longboat installation and project"
-  echo "    host create   Create new host"
-  echo "    inventory     Get inventory from API. Used by ansible"
+  echo "    host          Manage hosts."
+  echo "    sshkey        Manage your SSH keys."
+  echo "    inventory     Get inventory from API. Used by ansible."
   echo ""
   echo "More information in the online documentation:"
   echo "${LONGBOAT_DOCS}"
   echo ""
-}
-
-# No arguments, display help
-if [ -z "${COMMAND}" ]; then
-  help_briefly
   exit 1
 fi
 
 case "${COMMAND}" in
-"help")
-  help_briefly
-  exit 0
-  ;;
 "init")
   source ${BOATDIR}/bin/init || exit $?
   source ${BOATDIR}/bin/update || exit $?
@@ -64,6 +59,10 @@ case "${COMMAND}" in
   ;;
 "host")
   source ${BOATDIR}/bin/host
+  exit $?
+  ;;
+"sshkey")
+  source ${BOATDIR}/bin/sshkey
   exit $?
   ;;
 *)
