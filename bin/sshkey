@@ -16,21 +16,24 @@ fi
 
 case "${ARGUMENT}" in
 "list")
-  URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/sshkey"
-  RESPONSE=`curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
-  echo_json "${RESPONSE}"
+  echo_json "$(api_curl GET /sshkey)"
   ;;
 
 "add")  
   NAME="$3"
   KEYFILE="$4"
   URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/sshkey"
-  if [ ! -f ${KEYFILE} ]; then echo "ERROR! Key file ${KEYFILE} not found."; exit 1; fi
+
+  if [ ! -f ${KEYFILE} ]; then
+    echo "ERROR! Key file ${KEYFILE} not found."
+    exit 1
+  fi
   grep 'PRIVATE KEY' ${KEYFILE} > /dev/null
-  if [ $? -eq 0 ]; then echo "ERROR! Refusing to send what looks like a private key!"; exit 1; fi
-  KEY=`cat ${KEYFILE}`
-  RESPONSE=`curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" --data-urlencode "name=${NAME}" --data-urlencode "sshkey=${KEY}" -X POST "${URL}"`
-  echo_json "${RESPONSE}"
+  if [ $? -eq 0 ]; then
+    echo "ERROR! Refusing to send what looks like a private key!"
+    exit 1
+  fi
+  echo_json "$(api_curl POST /sshkey name=${NAME} sshkey@${KEYFILE})"
   ;;
 
 *)

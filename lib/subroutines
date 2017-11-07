@@ -1,11 +1,25 @@
 #!/usr/bin/env bash
 
-echo_json() {
+function echo_json() {
   command -v jq > /dev/null
   if [ $? -eq 0 ]; then
     echo $1 | jq .
   else
     echo $1
   fi
+}
+
+function api_curl() {
+  local ARGS=""
+  local METHOD="$1"
+  local URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2"
+
+  if [ $# -gt 2 ]; then
+    for ARG in "${@:3}"; do
+      ARGS="${ARGS} --data-urlencode ${ARG}"
+    done
+  fi
+
+  curl -s -H "Authorization: ${LONGBOAT_TOKEN}" ${ARGS} -X ${METHOD} "${URL}"
 }
 
