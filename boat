@@ -62,11 +62,15 @@ case "${COMMAND}" in
   exit $?
   ;;
 "sshkey")
-  source ${BOATDIR}/bin/sshkey
-  exit $?
-  ;;
+  source ${BOATDIR}/bin/sshkey ; exit $? ;;
+"sshkeys")
+  source ${BOATDIR}/bin/sshkey ; exit $? ;;
+"org")
+  source ${BOATDIR}/bin/organisation ; exit $? ;;
+"organisation")
+  source ${BOATDIR}/bin/organisation ; exit $? ;;
 *)
-  echo "ERROR! Unknown command. Try 'boat help' or the online documentation"
+  echo "ERROR! Unknown command. Try 'boat' or the online documentation"
   echo "       for more information: ${LONGBOAT_DOCS}"
   exit 1
   ;;
