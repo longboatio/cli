@@ -33,7 +33,7 @@ Management commands:
 
   host        Manage hosts.
   sshkey      Manage your SSH keys.
-  org         Manage your organisations.
+  org         Manage your organizations.
 
 Ansible commands:
 
@@ -74,9 +74,9 @@ case "${COMMAND}" in
 "sshkeys")
   source ${BOATDIR}/bin/sshkey ; exit $? ;;
 "org")
-  source ${BOATDIR}/bin/organisation ; exit $? ;;
-"organisation")
-  source ${BOATDIR}/bin/organisation ; exit $? ;;
+  source ${BOATDIR}/bin/organization ; exit $? ;;
+"organization")
+  source ${BOATDIR}/bin/organization ; exit $? ;;
 *)
   echo "ERROR! Unknown command. Try 'boat' or the online documentation"
   echo "       for more information: ${LONGBOAT_DOCS}"
