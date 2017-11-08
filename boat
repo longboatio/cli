@@ -21,32 +21,14 @@ fi
 if [ -f "${PROJECTDIR}/longboat.cfg" ]; then
   source ${PROJECTDIR}/longboat.cfg
 fi
-if [ -z "${COMMAND}" ] || [ "${COMMAND}" == "help" ]; then
-cat << ENDOFHELP
-Usage: boat <command> [<args>]
-
-  init        Initialize a new Longboat project
-  update      Update project with latest config
-  doctor      Check Longboat installation and project
-
-Management commands:
-
-  host        Manage hosts.
-  sshkey      Manage your SSH keys.
-  org         Manage your organizations.
-
-Ansible commands:
-
-  inventory   Get inventory from API. Used by ansible.
-
-More information in the online documentation:
-${LONGBOAT_DOCS}
-
-ENDOFHELP
-  exit 1
+if [ -z "${COMMAND}" ]; then
+  boat_help
+  exit 0
 fi
 
 case "${COMMAND}" in
+"help")
+  boat_help ; exit 0 ;;
 "init")
   source ${BOATDIR}/bin/init || exit $?
   source ${BOATDIR}/bin/update || exit $?
@@ -78,7 +60,7 @@ case "${COMMAND}" in
 "organization")
   source ${BOATDIR}/bin/organization ; exit $? ;;
 *)
-  echo "ERROR! Unknown command. Try 'boat' or the online documentation"
+  echo "ERROR! Unknown command. Try 'boat help' or the online documentation"
   echo "       for more information: ${LONGBOAT_DOCS}"
   exit 1
   ;;
