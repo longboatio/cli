@@ -20,7 +20,7 @@ boat sshkey add <name> <public-shh-key-file>
     Adding a ssh key from file. Only first line is added.
     Rxample: boat sshkey add keyname ~/.ssh/id_rsa.pub
 
-boat sshkey delete <name|id>
+boat sshkey delete <name>
     Deleting one of your ssh keys
     Rxample: boat sshkey delete keyname
 

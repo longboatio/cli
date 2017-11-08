@@ -8,6 +8,22 @@ boat org list
     List all your ssh keys.
     Example: boat org list
 
+boat org id <organisation-id>
+    Get organisation by id
+    Example: boat org id 12345
+
+boat org get <organisation-name>
+    Get organisation by name
+    Example: boat org get example-corp
+
+boat org create <organisation-name>
+    Creating a new organisation.
+    Rxample: boat org create example-corp
+
+boat org delete <name>
+    Deleting an organisation.
+    Example: boat org delete example-corp
+
 ENDOFHELP
   exit 1
 fi

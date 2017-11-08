@@ -21,20 +21,28 @@ fi
 if [ -f "${PROJECTDIR}/longboat.cfg" ]; then
   source ${PROJECTDIR}/longboat.cfg
 fi
+if [ -z "${COMMAND}" ] || [ "${COMMAND}" == "help" ]; then
+cat << ENDOFHELP
+Usage: boat <command> [<args>]
 
-if [ -z "${COMMAND}" ]; then
-  echo "Usage: boat <command> [<args>]"
-  echo ""
-  echo "    init          Initialize a new Longboat project"
-  echo "    update        Update project with latest config"
-  echo "    doctor        Check Longboat installation and project"
-  echo "    host          Manage hosts."
-  echo "    sshkey        Manage your SSH keys."
-  echo "    inventory     Get inventory from API. Used by ansible."
-  echo ""
-  echo "More information in the online documentation:"
-  echo "${LONGBOAT_DOCS}"
-  echo ""
+  init        Initialize a new Longboat project
+  update      Update project with latest config
+  doctor      Check Longboat installation and project
+
+Management commands:
+
+  host        Manage hosts.
+  sshkey      Manage your SSH keys.
+  org         Manage your organisations.
+
+Ansible commands:
+
+  inventory   Get inventory from API. Used by ansible.
+
+More information in the online documentation:
+${LONGBOAT_DOCS}
+
+ENDOFHELP
   exit 1
 fi
 
