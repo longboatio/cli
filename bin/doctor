@@ -59,14 +59,6 @@ else
   space "Please install Ansible: FIXME: Link to docs"
 fi
 
-# Ansible Version
-ANSIBLE_VERSION=`ansible-playbook --version | head -1 | awk '{print $2}' | tr "." " " | awk '{print $1}'`
-if [ "${ANSIBLE_VERSION}" == "1" ]; then
-  error "ansible version 1.x is not supported"
-else
-  ok "ansible version is 2.x or above."
-fi
-
 headline "Longboat User"
 
 # User configuration
