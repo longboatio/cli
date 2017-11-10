@@ -63,21 +63,21 @@ headline "Longboat User"
 
 # User configuration
 if [ -f "${HOME}/.longboat.cfg" ]; then
-  ok "Config file found: ${HOME}/.longboat.cfg"
+  ok "Config file found"
 
   # API Token
   if [ -z "${LONGBOAT_TOKEN}" ]; then
     error "LONGBOAT_TOKEN not found!"
     space "You might need to run 'boat auth' - FIXME: Link to docs"
   else
-    ok "LONGBOAT_TOKEN found!"
+    ok "Longboat token found"
   fi
 
   # Test API User Request
   URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/user"
   PING=`curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
   if [ $? -eq 0 ]; then
-    ok "API test - user: ${PURPLE}${PING}${NC}"
+    ok "API said you are: ${PURPLE}${PING}${NC}"
   else
     error "Longboat API did not respond correctly - error was:"
     space "${PING}"
@@ -85,7 +85,7 @@ if [ -f "${HOME}/.longboat.cfg" ]; then
   fi
 
 else
-  error "Longboat user config not found in ${HOME}/.longboat.cfg"
+  error "Longboat user config not found in: ${HOME}/.longboat.cfg"
   space "You won't be able to authenticate with Longboat"
   space "More information: FIXME: Link to docs"
 fi
@@ -94,21 +94,21 @@ headline "Longboat Project"
 
 # Project configuration
 if [ -f ./longboat.cfg ]; then
-  ok "Project config file found: ./longboat.cfg"
+  ok "Project config file found"
 
   # API Project
   if [ -z "${LONGBOAT_PROJECT}" ]; then
     error "LONGBOAT_PROJECT not found!"
     space "You might need to run 'boat ???' - FIXME: Link to docs"
   else
-    ok "LONGBOAT_PROJECT is: ${PURPLE}${LONGBOAT_PROJECT}${NC}"
+    ok "Project name is: ${PURPLE}${LONGBOAT_PROJECT}${NC}"
   fi
 
   # Test API Project Request
   URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/project/${LONGBOAT_PROJECT}"
   PING=`curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
   if [ $? -eq 0 ]; then
-    ok "API test - description: ${PURPLE}${PING}${NC}"
+    ok "API said project description is ${PURPLE}${PING}${NC}"
   else
     error "Longboat API did not respond correctly - error was:"
     space "${PING}"
