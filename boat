@@ -35,6 +35,11 @@ case "${COMMAND}" in
   source ${BOATDIR}/bin/doctor || exit $?
   exit 0
   ;;
+"upgrade")
+  echo "Pulling latest version of Longboat CLI..."
+  cd ${BOATDIR} && git pull -q
+  exit $?
+  ;;
 "update")
   source ${BOATDIR}/bin/update
   exit $?
