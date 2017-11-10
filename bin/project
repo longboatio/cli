@@ -14,10 +14,10 @@ case "${ARGUMENT}" in
   ;;
 
 "init")
-  # Create project
-  # Maybe add domain?
-  # Add default environments
-  # boat update project locally
+  # FIXME: Create project
+  # FIXME: Maybe add domain?
+  # FIXME: Add default environments
+  # FIXME: boat update project locally
   ;;
 
 "create")
