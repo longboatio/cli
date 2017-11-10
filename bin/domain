@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+case "${ARGUMENT}" in
+"id")
+  api_curl GET /domain/$3
+  ;;
+
+"get")
+  api_curl GET /domain/name/$3
+  ;;
+
+"list")
+  api_curl GET /domain
+  ;;
+
+"create")
+  api_curl POST /domain name=$3
+  ;;
+
+"delete")
+  api_curl GET /domain/$3
+  if [ "${CURL_CODE}" == "200" ]; then
+    api_curl DELETE /domain/$3
+  fi
+  ;;
+
+"help")
+cat << ENDOFHELP
+usage: boat domain <command> <args>
+
+  boat domain list
+
+      List all your domains across all organisations.
+      Example: boat domain list
+
+  boat domain id <domain-id>
+
+      Get domain by id
+      Example: boat domain id 12345
+
+  boat domain get <domain-name>
+
+      Get domain by name
+      Example: boat domain get example.com
+
+  boat domain create <domain-name> <organization-name>
+
+      Creates a domain for projects.
+      Example: boat domain create example.com example-corp
+
+  boat domain delete <domain-id>
+
+      Delete a domain by it's ID.
+      Domains that has one or more projects, can't be deleted.
+      Example: boat domain delete 12345
+
+ENDOFHELP
+  exit 0
+  ;;
+*)
+  echo "ERROR: Unknown domain command!"
+  echo ""
+  echo "List of available domain commands: boat domain help"
+  echo "Online documentation: ${LONGBOAT_DOCS}"
+  exit 1
+  ;;
+esac

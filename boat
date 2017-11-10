@@ -53,12 +53,14 @@ case "${COMMAND}" in
   ;;
 "sshkey")
   source ${BOATDIR}/bin/sshkey ; exit $? ;;
-"sshkeys")
-  source ${BOATDIR}/bin/sshkey ; exit $? ;;
 "org")
   source ${BOATDIR}/bin/organization ; exit $? ;;
 "organization")
   source ${BOATDIR}/bin/organization ; exit $? ;;
+"domain")
+  source ${BOATDIR}/bin/domain ; exit $? ;;
+"project")
+  source ${BOATDIR}/bin/project ; exit $? ;;
 *)
   echo "ERROR! Unknown command. Try 'boat help' or the online documentation"
   echo "       for more information: ${LONGBOAT_DOCS}"

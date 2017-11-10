@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+case "${ARGUMENT}" in
+"id")
+  api_curl GET /project/$3
+  ;;
+
+"get")
+  api_curl GET /project/name/$3
+  ;;
+
+"list")
+  api_curl GET /project
+  ;;
+
+"init")
+  # Create project
+  # Maybe add domain?
+  # Add default environments
+  # boat update project locally
+  ;;
+
+"create")
+  if [ -z $4 ]; then
+    api_curl POST /project name=$3
+  else
+    api_curl POST /project name=$3 organization_name=$4
+  fi
+  ;;
+
+"delete")
+  api_curl GET /project/$3
+  if [ "${CURL_CODE}" == "200" ]; then
+    api_curl DELETE /project/$3
+  fi
+  ;;
+
+"help")
+cat << ENDOFHELP
+usage: boat project <command> <args>
+
+  boat project list
+
+      List all your projets across all organisations.
+      Example: boat project list
+
+  boat project id <project-id>
+
+      Get project by id
+      Example: boat project id 12345
+
+  boat project get <project-name>
+
+      Get project by name
+      Example: boat project get example-corp
+
+  boat project init <projectname> <organization-name> <domain-name>
+
+      Create, initialize and setup a new project locally.
+      Organization name is optional *only if* you are only part of one
+      organisation, otherwise an error will be returned.
+      Example: boat project create new-project
+
+  boat project create <project-name> <organization-name> <domain-name>
+
+      You are most likely looking for 'boat project init' instead of create!
+      Creates an empty project, with not initialization at all.
+      Example: boat project create new-project example-corp
+
+  boat project delete <project-id>
+
+      Delete a project by it's ID. Note that projects that has one or more
+      environments, can't be deleted.
+
+ENDOFHELP
+  exit 0
+  ;;
+*)
+  echo "ERROR: Unknown project command!"
+  echo ""
+  echo "List of available project commands: boat project help"
+  echo "Online documentation: ${LONGBOAT_DOCS}"
+  exit 1
+  ;;
+esac

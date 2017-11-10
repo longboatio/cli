@@ -3,9 +3,9 @@
 function echo_json() {
   command -v jq > /dev/null
   if [ $? -eq 0 ]; then
-    echo $1 | jq .
+    echo "$1" | jq .
   else
-    echo $1
+    echo "$1"
   fi
 }
 
@@ -20,7 +20,21 @@ function api_curl() {
     done
   fi
 
-  curl -s -H "Authorization: ${LONGBOAT_TOKEN}" ${ARGS} -X ${METHOD} "${URL}"
+  CURL_TMP="/tmp/longboat.curl.$$"
+  touch ${CURL_TMP}
+  chmod 600 ${CURL_TMP}
+  CURL_CODE=`curl -s -w "%{http_code}" -o "${CURL_TMP}" -H "Authorization: ${LONGBOAT_TOKEN}" ${ARGS} -X ${METHOD} "${URL}"`
+  CURL_EXIT="$?"
+  CURL_RESPONSE=`cat ${CURL_TMP}`
+  rm ${CURL_TMP}
+
+  if [ ${CURL_EXIT} -gt 0 ]; then
+    echo "ERROR! API request failed - curl error code ${CURL_EXIT}"
+    echo "For more information https://curl.haxx.se/libcurl/c/libcurl-errors.html"
+    exit 1
+  fi
+
+  echo_json "${CURL_RESPONSE}"
 }
 
 function boat_help() {
@@ -36,6 +50,8 @@ Management commands:
   host        Manage hosts.
   sshkey      Manage your SSH keys.
   org         Manage your organizations.
+  domain      Manage your domains.
+  project     Manage projects.
 
 Ansible commands:
 
