@@ -21,6 +21,7 @@ fi
 if [ -f "${PROJECTDIR}/longboat.cfg" ]; then
   source ${PROJECTDIR}/longboat.cfg
 fi
+
 if [ -z "${COMMAND}" ]; then
   boat_help
   exit 0
