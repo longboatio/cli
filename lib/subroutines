@@ -41,9 +41,9 @@ function boat_help() {
 cat << ENDOFHELP
 Usage: boat <command> [<args>]
 
-  init        Initialize a new Longboat project
-  update      Update project with latest config
+  upgrade     Pull latest version of CLI tools
   doctor      Check Longboat installation and project
+  update      Update current project with latest config
 
 Management commands:
 
