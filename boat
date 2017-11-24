@@ -42,21 +42,11 @@ case "${COMMAND}" in
   exit $?
   ;;
 "update")
-  source ${BOATDIR}/bin/update
-  exit $?
-  ;;
+  source ${BOATDIR}/bin/update ; exit $? ;;
 "doctor")
-  source ${BOATDIR}/bin/doctor
-  exit $?
-  ;;
+  source ${BOATDIR}/bin/doctor ; exit $? ;;
 "inventory")
-  source ${BOATDIR}/bin/inventory
-  exit $?
-  ;;
-"host")
-  source ${BOATDIR}/bin/host
-  exit $?
-  ;;
+  source ${BOATDIR}/bin/inventory ; exit $? ;;
 "sshkey")
   source ${BOATDIR}/bin/sshkey ; exit $? ;;
 "org")
@@ -67,6 +57,8 @@ case "${COMMAND}" in
   source ${BOATDIR}/bin/project ; exit $? ;;
 "env")
   source ${BOATDIR}/bin/environment ; exit $? ;;
+"host")
+  source ${BOATDIR}/bin/host ; exit $? ;;
 *)
   echo "ERROR! Unknown command. Try 'boat help' or the online documentation"
   echo "       for more information: ${LONGBOAT_DOCS}"

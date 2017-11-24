@@ -1,33 +1,72 @@
-#!/bin/sh
-
-if [ -z "${ARGUMENT}" ]; then
-  echo "Usage: boat host <action> <options>"
-  echo ""
-  echo "    boat host create <hostname> <environment> [ipv4=<ip>] [ipv6=<ip>]"
-  echo "        example: boat host create webserver2 staging ipv4=1.2.3.4"
-  echo ""
-  exit 1
-fi
+#!/usr/bin/env bash
 
 case "${ARGUMENT}" in
-"create")
-  if [ "$#" -lt 4 ]; then
-    echo "ERROR: Missing arguments! Try \`boat host\` for help"
-    exit 2
-  fi
-  URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/hosts"
-  HOSTNAME="$3"
-  ENVIRONMENT="$4"
-  IP1="$5"
-  IP2="$6"
-  DATA="hostname=${HOSTNAME}&project=${LONGBOAT_PROJECT}&environment=${ENVIRONMENT}&${IP1}&${IP2}"
+"id")
+  api_curl GET /hosts/$3
+  ;;
 
-  curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" --data "${DATA}" -X POST "${URL}"
-  echo ""
+"get")
+  api_curl GET /hosts/name/$3 project_id=${LONGBOAT_PROJECT} environment_name=$4
+  ;;
+
+"list")
+  if [ -z $3 ]; then
+    api_curl GET /hosts project_id=${LONGBOAT_PROJECT}
+  else
+    api_curl GET /hosts project_id=${LONGBOAT_PROJECT} environment_name=$3
+  fi
+  ;;
+
+"create")
+  api_curl POST /hosts name=$3 environment_name=$4 project_id=${LONGBOAT_PROJECT} $5 $6
+  ;;
+
+"delete")
+  api_curl GET /hosts/$3
+  if [ "${CURL_CODE}" == "200" ]; then
+    api_curl DELETE /hosts/$3
+  fi
+  ;;
+
+"help")
+cat << ENDOFHELP
+usage: boat host <command> <args>
+
+FIXME: Info about project id requirement
+
+  boat host list [environment-name]
+
+      List all hosts.
+      Example: boat host list / boat host list prod
+
+  boat host id <host-id>
+
+      Get host by id
+      Example: boat host id 12345
+
+  boat host get <host-name> <environment-name>
+
+      Get host by name and environment
+      Example: boat host get web1 prod
+
+  boat host create <hostname> <environment> [ipv4=<ip>] [ipv6=<ip>]"
+
+      Create a new host.
+      Example: boat host create webserver2 stage ipv4=1.2.3.4"
+
+  boat host delete <host-id>
+
+      Delete a host by it's ID.
+      Example: boat host delete 12345
+
+ENDOFHELP
+  exit 0
   ;;
 *)
-  echo "ERROR! Unknown host command. Try 'boat host' or the online documentation"
-  echo "       for more information: ${LONGBOAT_DOCS}"
+  echo "ERROR: Unknown host command!"
+  echo ""
+  echo "List of available host commands: boat host help"
+  echo "Online documentation: ${LONGBOAT_DOCS}"
   exit 1
   ;;
 esac
