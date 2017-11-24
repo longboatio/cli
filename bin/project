@@ -54,14 +54,12 @@ usage: boat project <command> <args>
       Get project by name
       Example: boat project get example-corp
 
-  boat project init <projectname> <organization-name> <domain-name>
+  boat project init <projectname> <organization-name>
 
       Create, initialize and setup a new project locally.
-      Organization name is optional *only if* you are only part of one
-      organisation, otherwise an error will be returned.
-      Example: boat project create new-project
+      Example: boat project create new-project example-corp
 
-  boat project create <project-name> <organization-name> <domain-name>
+  boat project create <project-name> <organization-name>
 
       You are most likely looking for 'boat project init' instead of create!
       Creates an empty project, with not initialization at all.

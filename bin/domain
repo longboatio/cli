@@ -30,7 +30,7 @@ usage: boat domain <command> <args>
 
   boat domain list
 
-      List all your domains across all organisations.
+      List all domains across all organisations.
       Example: boat domain list
 
   boat domain id <domain-id>
