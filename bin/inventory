@@ -1,14 +1,12 @@
 #!/bin/sh
 
-if [ -z "${ARGUMENT}" ]; then
-  echo "ERROR: Missing environment argument"
-  echo "  ie.: boat inventory production"
-  echo "Read more FIXME: Link to documentation" 
-  exit 1
-fi
-
 # FIXME: Add feature of local cache file
 
-URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/ansible/inventory/${LONGBOAT_PROJECT}/${ARGUMENT}"
-curl --compressed -s -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"
+CURL_SILENT=true
+api_curl GET /ansible/inventory/${LONGBOAT_PROJECT}/${ARGUMENT}
+if [ "${CURL_CODE}" == "200" ]; then
+  echo "${CURL_RESPONSE}"
+else
+  echo_json "${CURL_RESPONSE}"
+fi
 
