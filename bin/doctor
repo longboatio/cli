@@ -74,16 +74,15 @@ if [ -f "${HOME}/.longboat.cfg" ]; then
   fi
 
   # Test API User Request
-  URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/user"
-  PING=`curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
-  if [ $? -eq 0 ]; then
-    ok "API said you are: ${PURPLE}${PING}${NC}"
+  CURL_SILENT=true
+  api_curl GET /doctor/user
+  if [ "${CURL_CODE}" == "200" ]; then
+    ok "You are: ${PURPLE}${CURL_RESPONSE}${NC} (from API)"
   else
     error "Longboat API did not respond correctly - error was:"
-    space "${PING}"
+    space "${CURL_RESPONSE}"
     space "Read more: FIXME: Link to docs"
   fi
-
 else
   error "Longboat user config not found in: ${HOME}/.longboat.cfg"
   space "You won't be able to authenticate with Longboat"
@@ -101,17 +100,17 @@ if [ -f ./longboat.cfg ]; then
     error "LONGBOAT_PROJECT not found!"
     space "You might need to run 'boat ???' - FIXME: Link to docs"
   else
-    ok "Project name is: ${PURPLE}${LONGBOAT_PROJECT}${NC}"
+    ok "Project ID: ${PURPLE}${LONGBOAT_PROJECT}${NC}"
   fi
 
   # Test API Project Request
-  URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/doctor/project/${LONGBOAT_PROJECT}"
-  PING=`curl --compressed -s -f -H "Authorization: ${LONGBOAT_TOKEN}" -X GET "${URL}"`
-  if [ $? -eq 0 ]; then
-    ok "API said project description is ${PURPLE}${PING}${NC}"
+  CURL_SILENT=true
+  api_curl GET /doctor/project/${LONGBOAT_PROJECT}
+  if [ "${CURL_CODE}" == "200" ]; then
+    ok "Project Name: ${PURPLE}${CURL_RESPONSE}${NC} (from API)"
   else
     error "Longboat API did not respond correctly - error was:"
-    space "${PING}"
+    space "${CURL_RESPONSE}"
     space "Read more: FIXME: Link to docs"
   fi
 

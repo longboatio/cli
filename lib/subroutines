@@ -34,7 +34,9 @@ function api_curl() {
     exit 1
   fi
 
-  echo_json "${CURL_RESPONSE}"
+  if [ -z ${CURL_SILENT} ]; then
+    echo_json "${CURL_RESPONSE}"
+  fi
 }
 
 function boat_help() {
