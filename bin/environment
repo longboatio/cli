@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+case "${ARGUMENT}" in
+"id")
+  api_curl GET /environments/$3
+  ;;
+
+"get")
+  api_curl GET /environments/name/$3 project_id=${LONGBOAT_PROJECT}
+  ;;
+
+"list")
+  if [ -z ${LONGBOAT_PROJECT} ]; then
+    api_curl GET /environments
+  else
+    api_curl GET /environments project_id=${LONGBOAT_PROJECT}
+  fi
+  ;;
+
+"create")
+  api_curl POST /environments name=$3 project_id=${LONGBOAT_PROJECT}
+  ;;
+
+"delete")
+  api_curl GET /environments/$3
+  if [ "${CURL_CODE}" == "200" ]; then
+    api_curl DELETE /environments/$3
+  fi
+  ;;
+
+"help")
+cat << ENDOFHELP
+usage: boat env <command> <args>
+
+FIXME: Info about project id requirement
+
+  boat env list
+
+      List all environments for a given project
+      Example: boat env list
+
+  boat env id <environment-id>
+
+      Get environment by id
+      Example: boat env id 12345
+
+  boat env get <environment-name>
+
+      Get environment by name
+      Example: boat env get example-corp
+
+  boat env create <environment-name>
+
+      Creates an environment.
+      Example: boat env create new-environment
+
+  boat env delete <environment-id>
+
+      Delete a environment by it's ID.
+      Example: boat env delete 12345
+
+ENDOFHELP
+  exit 0
+  ;;
+*)
+  echo "ERROR: Unknown environment command!"
+  echo ""
+  echo "List of available environment commands: boat env help"
+  echo "Online documentation: ${LONGBOAT_DOCS}"
+  exit 1
+  ;;
+esac
