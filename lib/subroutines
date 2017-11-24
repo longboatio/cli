@@ -47,13 +47,20 @@ Usage: boat <command> [<args>]
   doctor      Check Longboat installation and project
   update      Update current project with latest config
 
-Management commands:
+User commands:
 
-  host        Manage hosts.
   sshkey      Manage your SSH keys.
+
+Organization commands:
+
   org         Manage your organizations.
   domain      Manage your domains.
   project     Manage projects.
+
+Project commands:
+
+  host        Manage hosts.
+  env         Manage environments
 
 Ansible commands:
 
