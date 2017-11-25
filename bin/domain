@@ -24,6 +24,12 @@ case "${ARGUMENT}" in
   fi
   ;;
 
+"axfr")
+  CURL_SILENT=true
+  api_curl GET /domain/axfr/name/$3
+  echo "${CURL_RESPONSE}"
+  ;;
+
 "help")
 cat << ENDOFHELP
 usage: boat domain <command> <args>
@@ -53,6 +59,11 @@ usage: boat domain <command> <args>
       Delete a domain by it's ID.
       Domains that has one or more projects, can't be deleted.
       Example: boat domain delete 12345
+
+  boat domain axfr <domain-name>
+
+      Get the complete zone (AXFR) for a domain, displayed as plain text.
+      Example: boat domain axfr example.com
 
 ENDOFHELP
   exit 0
