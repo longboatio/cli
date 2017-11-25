@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+case "${ARGUMENT}" in
+"id")
+  api_curl GET /dnsrr/$3
+  ;;
+
+"get")
+  api_curl GET /dnsrr/name/$3 domain_name=$4
+  ;;
+
+"list")
+  api_curl GET /dnsrr domain_name=$3
+  ;;
+
+"create")
+  api_curl POST /dnsrr name=$3 type=$4 data=$5 domain_name=$6 $7
+  ;;
+
+"delete")
+  api_curl GET /dnsrr/$3
+  if [ "${CURL_CODE}" == "200" ]; then
+    api_curl DELETE /dnsrr/$3
+  fi
+  ;;
+
+"help")
+cat << ENDOFHELP
+usage: boat rr <command> <args>
+
+  boat rr list <domain-name>
+
+      List all dns records for a domain.
+      Example: boat rr list example.com
+
+  boat rr id <dns-record-id>
+
+      Get dns record by id
+      Example: boat rr id 12345
+
+  boat rr get <record-name> <domain-name>
+
+      Get all dns records by name
+      Example: boat rr get www example.com
+
+  boat rr create <name> <type> <data> <domain-name> [ttl=43200]
+
+      Creates a dns record for a domain.
+      Example: boat rr create www a 12.34.56.78 example.com
+
+  boat rr delete <dns-record-id>
+
+      Delete a dns record by it's ID.
+      Example: boat rr delete 12345
+
+ENDOFHELP
+  exit 0
+  ;;
+*)
+  echo "ERROR: Unknown rr command!"
+  echo ""
+  echo "List of available dns record commands: boat rr help"
+  echo "Online documentation: ${LONGBOAT_DOCS}"
+  exit 1
+  ;;
+esac
+

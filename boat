@@ -53,6 +53,8 @@ case "${COMMAND}" in
   source ${BOATDIR}/bin/organization ; exit $? ;;
 "domain")
   source ${BOATDIR}/bin/domain ; exit $? ;;
+"rr")
+  source ${BOATDIR}/bin/rr ; exit $? ;;
 "project")
   source ${BOATDIR}/bin/project ; exit $? ;;
 "env")
