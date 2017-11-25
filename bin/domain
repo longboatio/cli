@@ -27,7 +27,11 @@ case "${ARGUMENT}" in
 "axfr")
   CURL_SILENT=true
   api_curl GET /domain/axfr/name/$3
-  echo "${CURL_RESPONSE}"
+  if [ "${CURL_CODE}" == "200" ]; then
+    echo "${CURL_RESPONSE}"
+  else
+    echo_json "${CURL_RESPONSE}"
+  fi
   ;;
 
 "help")
