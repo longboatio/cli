@@ -54,8 +54,9 @@ User commands:
 Organization commands:
 
   org         Manage your organizations.
-  domain      Manage your domains.
   project     Manage projects.
+  domain      Manage domains.
+  rr          Manage dns records for domains.
 
 Project commands:
 
