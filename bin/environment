@@ -1,5 +1,19 @@
 #!/usr/bin/env bash
 
+function env_sync() {
+  CURL_SILENT=true
+  api_curl GET /environments project_id=${LONGBOAT_PROJECT}
+  if [ "${CURL_CODE}" == "200" ]; then
+    echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
+      echo "===> Writing file ${ENVNAME} ..."
+      echo "#!/bin/sh" > ${PROJECTDIR}/${ENVNAME}
+      echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
+      echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
+      chmod 755 ${PROJECTDIR}/${ENVNAME}
+    done
+  fi
+}
+
 case "${ARGUMENT}" in
 "id")
   api_curl GET /environments/$3
@@ -19,6 +33,9 @@ case "${ARGUMENT}" in
 
 "create")
   api_curl POST /environments name=$3 project_id=${LONGBOAT_PROJECT}
+  if [ "${CURL_CODE}" == "200" ]; then
+    env_sync
+  fi
   ;;
 
 "delete")
@@ -26,6 +43,10 @@ case "${ARGUMENT}" in
   if [ "${CURL_CODE}" == "200" ]; then
     api_curl DELETE /environments/$3
   fi
+  ;;
+
+"sync")
+  env_sync
   ;;
 
 "help")
@@ -58,6 +79,11 @@ FIXME: Info about project id requirement
 
       Delete a environment by it's ID.
       Example: boat env delete 12345
+
+  boat env sync
+
+      Sync all environments into local executable files.
+      Example: boat env sync
 
 ENDOFHELP
   exit 0
