@@ -38,8 +38,6 @@ case "${COMMAND}" in
   cd ${BOATDIR} && git pull -q
   exit $?
   ;;
-"update")
-  source ${BOATDIR}/bin/update ; exit $? ;;
 "doctor")
   source ${BOATDIR}/bin/doctor ; exit $? ;;
 "inventory")
