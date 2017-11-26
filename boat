@@ -13,8 +13,8 @@ source ${BOATDIR}/lib/subroutines || error "Could not load ${BOATDIR}/lib/subrou
 source ${BOATDIR}/etc/defaults.cfg || error "Could not load ${BOATDIR}/etc/defaults.cfg"
 
 # User configuration
-if [ -f "${HOME}/.longboat.cfg" ]; then
-  source ${HOME}/.longboat.cfg
+if [ -f "${HOME}/.longboat/config" ]; then
+  source ${HOME}/.longboat/config
 fi
 
 # Project configuration
