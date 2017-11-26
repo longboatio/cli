@@ -14,7 +14,7 @@ case "${ARGUMENT}" in
   ;;
 
 "create")
-  api_curl POST /dnsrr name=$3 type=$4 data=$5 domain_name=$6 $7
+  api_curl POST /dnsrr name=$3 type=$4 data=$5 domain_name=$6 $7 $8
   ;;
 
 "delete")
@@ -43,10 +43,11 @@ usage: boat rr <command> <args>
       Get all dns records by name
       Example: boat rr get www example.com
 
-  boat rr create <name> <type> <data> <domain-name> [ttl=43200]
+  boat rr create <name> <type> <data> <domain-name> [priority=10] [ttl=43200]
 
-      Creates a dns record for a domain.
-      Example: boat rr create www a 12.34.56.78 example.com
+      Creates a dns record for a domain. Priority is required for MX records.
+      Examples: boat rr create www a 12.34.56.78 example.com
+                boat rr create @ mx mail.example.com. example.com priority=10
 
   boat rr delete <dns-record-id>
 
