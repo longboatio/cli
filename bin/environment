@@ -32,7 +32,7 @@ case "${ARGUMENT}" in
   ;;
 
 "create")
-  api_curl POST /environments name=$3 project_id=${LONGBOAT_PROJECT}
+  api_curl POST /environments name=$3 project_id=${LONGBOAT_PROJECT} $4 $5
   if [ "${CURL_CODE}" == "200" ]; then
     env_sync
   fi
@@ -70,10 +70,12 @@ FIXME: Info about project id requirement
       Get environment by name
       Example: boat env get example-corp
 
-  boat env create <environment-name>
+  boat env create <environment-name> [subdomain=subdomain domain_name=domain]
 
-      Creates an environment.
-      Example: boat env create new-environment
+      Creates an environment. Optionally add the environment to an existing
+      domain name and host names will be created as well - highly recommended.
+      Examples: boat env create production
+                boat env create production subdomain=prod domain_name=example.com
 
   boat env delete <environment-id>
 
