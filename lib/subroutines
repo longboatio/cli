@@ -40,7 +40,6 @@ Usage: boat <command> [<args>]
 
   upgrade     Pull latest version of CLI tools
   doctor      Check Longboat installation and project
-  update      Update current project with latest config
 
 User commands:
 
