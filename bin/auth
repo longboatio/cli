@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+if [ -z "${LONGBOAT_TOKEN}" ]; then
+  if [ -f "${USERCONFIG}" ]; then
+    echo ""
+    echo "Config file already exists in ${USERCONFIG}"
+  else
+    echo "==> Longboat requires an API token. If you don't have one, get it"
+    echo "==> from: https://gorm.longboat.io/token/list"
+    echo ""
+    echo -n "Longboat API Token: "
+    read TOKEN
+    echo "==> Writing user config ${USERCONFIG}"
+    echo "# Longboat API Configuration" > ${USERCONFIG}
+    echo "LONGBOAT_TOKEN=\"${TOKEN}\"" >> ${USERCONFIG}
+    echo "LONGBOAT_PATH=\"${BOATDIR}\"" >> ${USERCONFIG}
+    echo "==> Done. Test it with: boat doctor"
+    exit 0
+  fi
+else
+  echo ""
+  echo "LONGBOAT_TOKEN is already set."
+fi
+
+echo ""
+echo "If you really want to re-authenticate, either update the"
+echo "content of LONGBOAT_TOKEN in ${USERCONFIG}"
+echo "or delete the file ${USERCONFIG} and afterwards run: boat auth"
+
+exit 1
+

@@ -73,7 +73,7 @@ fi
 headline "Longboat User"
 
 # User configuration
-if [ -f "${HOME}/.longboat/config" ]; then
+if [ -f "${USERCONFIG}" ]; then
   ok "Config file found"
 
   # API Token
@@ -95,7 +95,7 @@ if [ -f "${HOME}/.longboat/config" ]; then
     space "Read more: FIXME: Link to docs"
   fi
 else
-  error "Longboat user config not found in: ${PURPLE}${HOME}/.longboat/config${NC}"
+  error "Longboat user config not found in: ${PURPLE}${USERCONFIG}${NC}"
   space "You won't be able to authenticate with Longboat and use the CLI tools."
   space "You can create a new user with: ${PURPLE}boat register${NC}"
   space "or authenticate an existing with: ${PURPLE}boat auth${NC}"

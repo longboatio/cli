@@ -5,6 +5,7 @@ ARGUMENT="$2"
 
 BOATDIR=`dirname $0`
 PROJECTDIR=`pwd`
+USERCONFIG="${HOME}/.longboat/config"
 
 # Subroutines
 source ${BOATDIR}/lib/subroutines || error "Could not load ${BOATDIR}/lib/subroutines"
@@ -13,8 +14,8 @@ source ${BOATDIR}/lib/subroutines || error "Could not load ${BOATDIR}/lib/subrou
 source ${BOATDIR}/etc/defaults.cfg || error "Could not load ${BOATDIR}/etc/defaults.cfg"
 
 # User configuration
-if [ -f "${HOME}/.longboat/config" ]; then
-  source ${HOME}/.longboat/config
+if [ -f "${USERCONFIG}" ]; then
+  source ${USERCONFIG}
 fi
 
 # Project configuration
@@ -30,6 +31,8 @@ fi
 case "${COMMAND}" in
 "help")
   boat_help ; exit 0 ;;
+"auth")
+  source ${BOATDIR}/bin/auth ; exit $? ;;
 "init")
   source ${BOATDIR}/bin/init || exit $?
   source ${BOATDIR}/bin/update || exit $?
