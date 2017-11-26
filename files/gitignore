@@ -1,4 +1,4 @@
-# Default Longboat .gitignore file
+# Default .gitignore file for Longboat project
 # FIXME: See docs for more information
 roles/*
 

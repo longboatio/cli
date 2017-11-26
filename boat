@@ -33,12 +33,6 @@ case "${COMMAND}" in
   boat_help ; exit 0 ;;
 "auth")
   source ${BOATDIR}/bin/auth ; exit $? ;;
-"init")
-  source ${BOATDIR}/bin/init || exit $?
-  source ${BOATDIR}/bin/update || exit $?
-  source ${BOATDIR}/bin/doctor || exit $?
-  exit 0
-  ;;
 "upgrade")
   echo "Pulling latest version of Longboat CLI..."
   cd ${BOATDIR} && git pull -q

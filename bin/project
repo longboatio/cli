@@ -14,18 +14,48 @@ case "${ARGUMENT}" in
   ;;
 
 "init")
-  # FIXME: Create project
-  # FIXME: Maybe add domain?
-  # FIXME: Add default environments
-  # FIXME: boat update project locally
+  NAME="$3"
+  ORGANIZATION="$4"
+  if [ -d "${NAME}" ]; then 
+    echo "==> ERROR: Directory ${NAME} exists."
+    exit 1
+  fi
+  echo "===> Creating Project ${NAME} ..."
+  api_curl POST /project name=${NAME} organization_name=${ORGANIZATION}
+  if [ "${CURL_CODE}" == "200" ]; then
+    PROJECTID=`echo "${CURL_RESPONSE}" | jq -r '.["id"]'`
+    mkdir ${NAME}
+    cd ${NAME}
+    git init --quiet
+
+    echo "===> Writing configuration file longboat.cfg"
+    echo "# Longboat API Configuration" > longboat.cfg
+    echo "LONGBOAT_PROJECT=\"${PROJECTID}\"" >> longboat.cfg
+    git add longboat.cfg
+
+    echo "===> Adding .gitignore file ..."
+    cp ${BOATDIR}/files/gitignore .gitignore
+    git add .gitignore
+
+    echo "===> Adding initial ansible.cfg ..."
+    cp ${BOATDIR}/files/ansible.cfg ansible.cfg
+    git add ansible.cfg
+
+    echo "===> Git cloning Ansible roles ..."
+    git clone --quiet https://github.com/longboatio/roles.git
+
+    echo "===> Initial git commit ..."
+    git commit --quiet -m "Longboat project ${NAME} initialized"
+
+    echo "===> Done! Test is with: cd ${NAME} ; boat doctor"
+  else
+    echo "===> ERROR: Could not create project"
+    exit 1
+  fi
   ;;
 
 "create")
-  if [ -z $4 ]; then
-    api_curl POST /project name=$3
-  else
-    api_curl POST /project name=$3 organization_name=$4
-  fi
+  api_curl POST /project name=$3 organization_name=$4
   ;;
 
 "delete")
@@ -57,7 +87,7 @@ usage: boat project <command> <args>
   boat project init <projectname> <organization-name>
 
       Create, initialize and setup a new project locally.
-      Example: boat project create new-project example-corp
+      Example: boat project init new-project example-corp
 
   boat project create <project-name> <organization-name>
 
