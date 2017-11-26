@@ -50,19 +50,30 @@ else
   space "Please install Git: FIXME: Link to docs"
 fi
 
+# JQ
+command -v jq > /dev/null
+if [ $? -eq 0 ]; then
+  ok "jq is installed"
+else
+  error "jq command not found!"
+  space "Please install jq: FIXME: Link to docs"
+fi
+
 # Ansible Playbook
 command -v ansible-playbook > /dev/null
 if [ $? -eq 0 ]; then
   ok "ansible is installed"
 else
-  error "ansible-playbook command not found!"
-  space "Please install Ansible: FIXME: Link to docs"
+  info "ansible-playbook command not found!"
+  space "Ansible is not a requirement for Longboat CLI tools, but if you"
+  space "are planning on using Ansible with Longboat, it should be installed."
+  space "FIXME: Link to docs"
 fi
 
 headline "Longboat User"
 
 # User configuration
-if [ -f "${HOME}/.longboat.cfg" ]; then
+if [ -f "${HOME}/.longboat/config" ]; then
   ok "Config file found"
 
   # API Token
@@ -77,15 +88,17 @@ if [ -f "${HOME}/.longboat.cfg" ]; then
   CURL_SILENT=true
   api_curl GET /doctor/user
   if [ "${CURL_CODE}" == "200" ]; then
-    ok "You are: ${PURPLE}${CURL_RESPONSE}${NC} (from API)"
+    ok "API says: ${PURPLE}${CURL_RESPONSE}${NC}"
   else
     error "Longboat API did not respond correctly - error was:"
     space "${CURL_RESPONSE}"
     space "Read more: FIXME: Link to docs"
   fi
 else
-  error "Longboat user config not found in: ${HOME}/.longboat.cfg"
-  space "You won't be able to authenticate with Longboat"
+  error "Longboat user config not found in: ${PURPLE}${HOME}/.longboat/config${NC}"
+  space "You won't be able to authenticate with Longboat and use the CLI tools."
+  space "You can create a new user with: ${PURPLE}boat register${NC}"
+  space "or authenticate an existing with: ${PURPLE}boat auth${NC}"
   space "More information: FIXME: Link to docs"
 fi
 
@@ -107,7 +120,7 @@ if [ -f ./longboat.cfg ]; then
   CURL_SILENT=true
   api_curl GET /doctor/project/${LONGBOAT_PROJECT}
   if [ "${CURL_CODE}" == "200" ]; then
-    ok "Project Name: ${PURPLE}${CURL_RESPONSE}${NC} (from API)"
+    ok "API says project name is: ${PURPLE}${CURL_RESPONSE}${NC}"
   else
     error "Longboat API did not respond correctly - error was:"
     space "${CURL_RESPONSE}"
