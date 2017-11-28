@@ -6,7 +6,7 @@ function env_sync() {
   if [ "${CURL_CODE}" == "200" ]; then
     echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
       echo "===> Writing file ${ENVNAME} ..."
-      echo "#!/bin/sh" > ${PROJECTDIR}/${ENVNAME}
+      echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
       echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
       echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
       chmod 755 ${PROJECTDIR}/${ENVNAME}
