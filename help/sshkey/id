@@ -1,0 +1,5 @@
+boat sshkey id <key-id>
+
+    Get SSH key by id
+    Example: boat sshkey id 12345
+

@@ -1,0 +1,5 @@
+boat sshkey list
+
+    List all your ssh keys.
+    Example: boat sshkey list
+
