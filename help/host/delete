@@ -1,0 +1,5 @@
+boat host delete <host-id>
+
+    Delete a host by it's ID.
+    Example: boat host delete 12345
+

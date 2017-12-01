@@ -1,0 +1,5 @@
+boat host list [environment-name]
+
+    List all hosts.
+    Example: boat host list / boat host list prod
+

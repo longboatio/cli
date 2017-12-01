@@ -1,0 +1,5 @@
+boat host id <host-id>
+
+    Get host by id
+    Example: boat host id 12345
+
