@@ -6,6 +6,7 @@ BLUE="\033[0;34m"
 PURPLE="\033[0;35m"
 NC="\033[0m"
 FOUNDERROR="false"
+CURL_CONTINUE="true"
 
 headline() {
   echo ""

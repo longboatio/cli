@@ -32,6 +32,12 @@ function api_curl() {
   if [ -z ${CURL_SILENT} ]; then
     echo_json "${CURL_RESPONSE}"
   fi
+
+  if [ -z ${CURL_CONTINUE} ]; then
+    if [ "${CURL_CODE}" != "200" ]; then
+      exit 1
+    fi
+  fi
 }
 
 function boat_help() {
