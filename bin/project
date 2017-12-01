@@ -41,8 +41,9 @@ case "${ARGUMENT}" in
     cp ${BOATDIR}/files/ansible.cfg ansible.cfg
     git add ansible.cfg
 
-    echo "===> Git cloning Ansible roles ..."
-    git clone --quiet https://github.com/longboatio/roles.git
+    echo "===> Git cloning Longboat Ansible roles ..."
+    mkdir roles
+    git clone --quiet https://github.com/longboatio/roles.git roles/longboat
 
     echo "===> Initial git commit ..."
     git commit --quiet -m "Longboat project ${NAME} initialized"
