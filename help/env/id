@@ -1,0 +1,5 @@
+boat env id <environment-id>
+
+    Get environment by id
+    Example: boat env id 12345
+

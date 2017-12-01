@@ -1,0 +1,5 @@
+boat sshkey add <name> <public-shh-key-file>
+
+    Adding a ssh key from file. Only first line is added.
+    Example: boat sshkey add keyname ~/.ssh/id_rsa.pub
+

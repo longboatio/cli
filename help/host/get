@@ -1,0 +1,5 @@
+boat host get <host-name> <environment-name>
+
+    Get host by name and environment
+    Example: boat host get web1 prod
+

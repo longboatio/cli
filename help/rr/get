@@ -1,0 +1,5 @@
+boat rr get <record-name> <domain-name>
+
+    Get all dns records by name
+    Example: boat rr get www example.com
+

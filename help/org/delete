@@ -1,0 +1,5 @@
+boat org delete <name>
+
+    Deleting an organization.
+    Example: boat org delete example-corp
+

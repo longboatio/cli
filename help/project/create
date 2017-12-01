@@ -1,0 +1,6 @@
+boat project create <project-name> <organization-name>
+
+    You are most likely looking for 'boat project init' instead of create!
+    Creates an empty project, with not initialization at all.
+    Example: boat project create new-project example-corp
+

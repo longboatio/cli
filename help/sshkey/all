@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+for SECTION in id get list add delete; do
+  cat ${BOATDIR}/help/sshkey/${SECTION}
+done
+

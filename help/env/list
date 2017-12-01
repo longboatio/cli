@@ -1,0 +1,5 @@
+boat env list
+
+    List all environments for a given project
+    Example: boat env list
+

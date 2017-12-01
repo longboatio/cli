@@ -1,0 +1,5 @@
+boat domain axfr <domain-name>
+
+    Get the complete zone (AXFR) for a domain, displayed as plain text.
+    Example: boat domain axfr example.com
+

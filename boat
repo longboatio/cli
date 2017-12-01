@@ -23,14 +23,17 @@ if [ -f "${PROJECTDIR}/longboat.cfg" ]; then
   source ${PROJECTDIR}/longboat.cfg
 fi
 
-if [ -z "${COMMAND}" ]; then
-  boat_help
-  exit 0
-fi
+# Check for -h or --help
+for HELPARG in "$@"; do
+  case "${HELPARG}" in
+  "-h")
+    source ${BOATDIR}/bin/help ; exit 0 ;;
+  "--help")
+    source ${BOATDIR}/bin/help ; exit 0 ;;
+  esac
+done
 
 case "${COMMAND}" in
-"help")
-  boat_help ; exit 0 ;;
 "auth")
   source ${BOATDIR}/bin/auth ; exit $? ;;
 "upgrade")
@@ -57,8 +60,8 @@ case "${COMMAND}" in
 "host")
   source ${BOATDIR}/bin/host ; exit $? ;;
 *)
-  echo "ERROR! Unknown command. Try 'boat help' or the online documentation"
-  echo "       for more information: ${LONGBOAT_DOCS}"
+  echo "ERROR! Unknown command. Try: boat -h"
+  echo "or the online documentation: ${LONGBOAT_DOCS}"
   exit 1
   ;;
 esac

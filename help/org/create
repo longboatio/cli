@@ -1,0 +1,5 @@
+boat org create <organization-name>
+
+    Creating a new organization.
+    Rxample: boat org create example-corp
+

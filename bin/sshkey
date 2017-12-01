@@ -1,33 +1,5 @@
 #!/usr/bin/env bash
 
-if [ -z "${ARGUMENT}" ]; then
-cat << ENDOFHELP
-usage: boat sshkey <action> <args>
-
-boat sshkey list
-    List all your ssh keys.
-    Example: boat sshkey list
-
-boat sshkey id <key-id>
-    Get SSH key by id
-    Example: boat sshkey id 12345
-
-boat sshkey get <key-name>
-    Get SSH key by name
-    Example: boat sshkey get mykeyname
-
-boat sshkey add <name> <public-shh-key-file>
-    Adding a ssh key from file. Only first line is added.
-    Rxample: boat sshkey add keyname ~/.ssh/id_rsa.pub
-
-boat sshkey delete <name>
-    Deleting one of your ssh keys
-    Rxample: boat sshkey delete keyname
-
-ENDOFHELP
-  exit 1
-fi
-
 case "${ARGUMENT}" in
 "id")
   api_curl GET /sshkey/$3
@@ -63,9 +35,7 @@ case "${ARGUMENT}" in
   ;;
 
 *)
-  echo "ERROR! Unknown sshkey command. Try 'boat sshkey' or the online documentation"
-  echo "       for more information: ${LONGBOAT_DOCS}"
-  exit 1
+  echo "ERROR! Unknown sshkey command. Try: boat sshkey -h"
   ;;
 esac
 

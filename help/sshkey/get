@@ -1,0 +1,5 @@
+boat sshkey get <key-name>
+
+    Get SSH key by name
+    Example: boat sshkey get mykeyname
+

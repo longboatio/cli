@@ -28,45 +28,8 @@ case "${ARGUMENT}" in
   fi
   ;;
 
-"help")
-cat << ENDOFHELP
-usage: boat host <command> <args>
-
-FIXME: Info about project id requirement
-
-  boat host list [environment-name]
-
-      List all hosts.
-      Example: boat host list / boat host list prod
-
-  boat host id <host-id>
-
-      Get host by id
-      Example: boat host id 12345
-
-  boat host get <host-name> <environment-name>
-
-      Get host by name and environment
-      Example: boat host get web1 prod
-
-  boat host create <hostname> <environment> [ipv4=<ip>] [ipv6=<ip>]"
-
-      Create a new host.
-      Example: boat host create webserver2 stage ipv4=1.2.3.4"
-
-  boat host delete <host-id>
-
-      Delete a host by it's ID.
-      Example: boat host delete 12345
-
-ENDOFHELP
-  exit 0
-  ;;
 *)
-  echo "ERROR: Unknown host command!"
-  echo ""
-  echo "List of available host commands: boat host help"
-  echo "Online documentation: ${LONGBOAT_DOCS}"
+  echo "ERROR: Unknown host command! Try: boat host -h"
   exit 1
   ;;
 esac

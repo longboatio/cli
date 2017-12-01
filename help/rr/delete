@@ -1,0 +1,5 @@
+boat rr delete <dns-record-id>
+
+    Delete a dns record by it's ID.
+    Example: boat rr delete 12345
+

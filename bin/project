@@ -66,49 +66,9 @@ case "${ARGUMENT}" in
   fi
   ;;
 
-"help")
-cat << ENDOFHELP
-usage: boat project <command> <args>
-
-  boat project list
-
-      List all your projets across all organisations.
-      Example: boat project list
-
-  boat project id <project-id>
-
-      Get project by id
-      Example: boat project id 12345
-
-  boat project get <project-name>
-
-      Get project by name
-      Example: boat project get example-corp
-
-  boat project init <projectname> <organization-name>
-
-      Create, initialize and setup a new project locally.
-      Example: boat project init new-project example-corp
-
-  boat project create <project-name> <organization-name>
-
-      You are most likely looking for 'boat project init' instead of create!
-      Creates an empty project, with not initialization at all.
-      Example: boat project create new-project example-corp
-
-  boat project delete <project-id>
-
-      Delete a project by it's ID. Note that projects that has one or more
-      environments, can't be deleted.
-
-ENDOFHELP
-  exit 0
-  ;;
 *)
-  echo "ERROR: Unknown project command!"
-  echo ""
-  echo "List of available project commands: boat project help"
-  echo "Online documentation: ${LONGBOAT_DOCS}"
+  echo "ERROR: Unknown project command! Try: boat project -h"
   exit 1
   ;;
 esac
+

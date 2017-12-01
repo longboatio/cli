@@ -1,0 +1,8 @@
+Usage: boat inventory <environment>
+
+    Used inside a project directory, to get a complete Ansible inventory
+    from Longboat. The command is used by the environment executables,
+    but for testing purposes you can easily run it like:
+
+        boat inventory <environment> | jq .
+

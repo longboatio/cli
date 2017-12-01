@@ -1,0 +1,5 @@
+boat sshkey delete <name>
+
+    Deleting one of your ssh keys
+    Example: boat sshkey delete keyname
+
