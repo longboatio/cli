@@ -30,15 +30,15 @@ fi
 
 case "${ARGUMENT}" in
 "id")
-  echo_json "$(api_curl GET /sshkey/$3)"
+  api_curl GET /sshkey/$3
   ;;
 
 "get")
-  echo_json "$(api_curl GET /sshkey/$3/byname)"
+  api_curl GET /sshkey/$3/byname
   ;;
 
 "list")
-  echo_json "$(api_curl GET /sshkey)"
+  api_curl GET /sshkey
   ;;
 
 "add")  
@@ -55,11 +55,11 @@ case "${ARGUMENT}" in
     echo "ERROR! Refusing to send what looks like a private key!"
     exit 1
   fi
-  echo_json "$(api_curl POST /sshkey name=${NAME} sshkey@${KEYFILE})"
+  api_curl POST /sshkey name=${NAME} sshkey@${KEYFILE}
   ;;
 
 "delete")
-  echo_json "$(api_curl DELETE /sshkey/$3/byname)"
+  api_curl DELETE /sshkey/$3/byname
   ;;
 
 *)
