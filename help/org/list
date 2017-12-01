@@ -1,0 +1,5 @@
+boat org list
+
+    List all your ssh keys.
+    Example: boat org list
+

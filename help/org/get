@@ -1,0 +1,5 @@
+boat org get <organization-name>
+
+    Get organization by name
+    Example: boat org get example-corp
+
