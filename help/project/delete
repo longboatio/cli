@@ -1,0 +1,5 @@
+boat project delete <project-id>
+
+    Delete a project by it's ID. Note that projects that has one or more
+    environments, can't be deleted.
+

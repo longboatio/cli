@@ -1,0 +1,5 @@
+boat project get <project-name>
+
+    Get project by name
+    Example: boat project get example-corp
+
