@@ -1,0 +1,5 @@
+boat env get <environment-name>
+
+    Get environment by name
+    Example: boat env get example-corp
+

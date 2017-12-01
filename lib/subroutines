@@ -40,35 +40,3 @@ function api_curl() {
   fi
 }
 
-function boat_help() {
-cat << ENDOFHELP
-Usage: boat <command> [<args>]
-
-  upgrade     Pull latest version of CLI tools
-  doctor      Check Longboat installation and project
-
-User commands:
-
-  sshkey      Manage your SSH keys.
-
-Organization commands:
-
-  org         Manage your organizations.
-  project     Manage projects.
-  domain      Manage domains.
-  rr          Manage dns records for domains.
-
-Project commands:
-
-  host        Manage hosts.
-  env         Manage environments
-
-Ansible commands:
-
-  inventory   Get inventory from API. Used by ansible.
-
-More information in the online documentation:
-${LONGBOAT_DOCS}
-
-ENDOFHELP
-}

@@ -1,0 +1,7 @@
+boat env create <environment-name> [subdomain=subdomain domain_name=domain]
+
+    Creates an environment. Optionally add the environment to an existing
+    domain name and host names will be created as well - highly recommended.
+    Examples: boat env create production
+              boat env create production subdomain=prod domain_name=example.com
+

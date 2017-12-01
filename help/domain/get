@@ -1,0 +1,5 @@
+boat domain get <domain-name>
+
+    Get domain by name
+    Example: boat domain get example.com
+

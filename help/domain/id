@@ -1,0 +1,5 @@
+boat domain id <domain-id>
+
+    Get domain by id
+    Example: boat domain id 12345
+

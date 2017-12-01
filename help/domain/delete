@@ -1,0 +1,6 @@
+boat domain delete <domain-id>
+
+    Delete a domain by it's ID.
+    Domains that has one or more projects, can't be deleted.
+    Example: boat domain delete 12345
+

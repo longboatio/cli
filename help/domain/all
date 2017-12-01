@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+for SECTION in id get list create axfr delete; do
+  cat ${BOATDIR}/help/domain/${SECTION}
+done
+

@@ -1,0 +1,5 @@
+boat env delete <environment-id>
+
+    Delete a environment by it's ID.
+    Example: boat env delete 12345
+

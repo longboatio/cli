@@ -1,0 +1,10 @@
+Usage: boat auth
+
+Interactively setup local Longboat token for API access and CLI tools.
+
+First create a token via the Longboat website: https://gorm.longboat.io
+Then run 'boat auth' to enable API access and the Longboat CLI Tools.
+
+If you don't have a Longboat user yet, you can either run 'boat register'
+or you can signup via the website: https://gorm.longboat.io
+
