@@ -1,0 +1,5 @@
+boat rr id <dns-record-id>
+
+    Get dns record by id
+    Example: boat rr id 12345
+

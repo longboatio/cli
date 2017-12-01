@@ -1,0 +1,5 @@
+boat rr list <domain-name>
+
+    List all dns records for a domain.
+    Example: boat rr list example.com
+

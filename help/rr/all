@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+for SECTION in id get list create delete; do
+  cat ${BOATDIR}/help/rr/${SECTION}
+done
+

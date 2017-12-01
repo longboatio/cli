@@ -1,0 +1,6 @@
+boat rr create <name> <type> <data> <domain-name> [priority=10] [ttl=43200]
+
+    Creates a dns record for a domain. Priority is required for MX records.
+    Examples: boat rr create www a 12.34.56.78 example.com
+              boat rr create @ mx mail.example.com. example.com priority=10
+
