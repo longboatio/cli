@@ -30,24 +30,24 @@ fi
 
 case "${ARGUMENT}" in
 "id")
-  echo_json "$(api_curl GET /organization/$3)"
+  api_curl GET /organization/$3
   ;;
 
 "get")
-  echo_json "$(api_curl GET /organization/$3/byname)"
+  api_curl GET /organization/$3/byname
   ;;
 
 "list")
-  echo_json "$(api_curl GET /organization)"
+  api_curl GET /organization
   ;;
 
 "create")  
   # FIXME: Optional uid/login during create ?
-  echo_json "$(api_curl POST /organization name=$3)"
+  api_curl POST /organization name=$3
   ;;
 
 "delete")
-  echo_json "$(api_curl DELETE /organization/$3/byname)"
+  api_curl DELETE /organization/$3/byname
   ;;
 
 *)
