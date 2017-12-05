@@ -1,5 +1,5 @@
-boat org delete <name>
+boat org delete <id>
 
-    Deleting an organization.
-    Example: boat org delete example-corp
+    Deleting an organization by id.
+    Example: boat org delete 12345
 

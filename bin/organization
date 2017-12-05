@@ -19,7 +19,10 @@ case "${ARGUMENT}" in
   ;;
 
 "delete")
-  api_curl DELETE /organization/$3/byname
+  api_curl GET /organization/$3
+  if [ "${CURL_CODE}" == "200" ]; then
+    api_curl DELETE /organization/$3
+  fi
   ;;
 
 *)
