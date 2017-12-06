@@ -35,13 +35,6 @@ for HELPARG in "$@"; do
 done
 
 case "${COMMAND}" in
-"auth")
-  source ${BOATDIR}/bin/auth ; exit $? ;;
-"upgrade")
-  echo "Pulling latest version of Longboat CLI..."
-  cd ${BOATDIR} && git pull -q
-  exit $?
-  ;;
 "doctor")
   source ${BOATDIR}/bin/doctor ; exit $? ;;
 "inventory")
@@ -60,6 +53,13 @@ case "${COMMAND}" in
   source ${BOATDIR}/bin/environment ; exit $? ;;
 "host")
   source ${BOATDIR}/bin/host ; exit $? ;;
+"auth")
+  source ${BOATDIR}/bin/auth ; exit $? ;;
+"upgrade")
+  echo "Pulling latest version of Longboat CLI..."
+  cd ${BOATDIR} && git pull -q
+  exit $?
+  ;;
 *)
   echo "ERROR! Unknown command. Try: boat -h"
   echo "or the online documentation: ${LONGBOAT_DOCS}"
