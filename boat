@@ -5,7 +5,8 @@ ARGUMENT="$2"
 
 BOATDIR=`dirname $0`
 PROJECTDIR=`pwd`
-USERCONFIG="${HOME}/.longboat/config"
+USERCONFIGDIR="${HOME}/.longboat"
+USERCONFIG="${USERCONFIGDIR}/config"
 
 # Subroutines
 source ${BOATDIR}/lib/subroutines || error "Could not load ${BOATDIR}/lib/subroutines"

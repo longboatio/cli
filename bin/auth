@@ -10,7 +10,11 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     echo ""
     echo -n "Longboat API Token: "
     read TOKEN
+    echo ""
     echo "==> Writing user config ${USERCONFIG}"
+    if [ ! -d "${USERCONFIGDIR}" ]; then
+      mkdir ${USERCONFIGDIR}
+    fi
     echo "# Longboat API Configuration" > ${USERCONFIG}
     echo "LONGBOAT_TOKEN=\"${TOKEN}\"" >> ${USERCONFIG}
     echo "LONGBOAT_PATH=\"${BOATDIR}\"" >> ${USERCONFIG}
