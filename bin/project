@@ -66,6 +66,11 @@ case "${ARGUMENT}" in
   fi
   ;;
 
+"sync")
+  echo "=> Syncing environments"
+  ${BOATDIR}/boat env sync
+  ;;
+
 *)
   echo "ERROR: Unknown project command! Try: boat project -h"
   exit 1

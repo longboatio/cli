@@ -5,7 +5,7 @@ function env_sync() {
   api_curl GET /environments project_id=${LONGBOAT_PROJECT}
   if [ "${CURL_CODE}" == "200" ]; then
     echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
-      echo "===> Writing file ${ENVNAME} ..."
+      echo "===> Writing environment file: ${ENVNAME} ..."
       echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
       echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
       echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
