@@ -40,3 +40,21 @@ function api_curl() {
   fi
 }
 
+function confirm_delete() {
+  local METHOD="$1"
+  local URL="$2"
+
+  if [ "${LONGBOAT_DONTASK}" == "true" ]; then
+    api_curl ${METHOD} ${URL}
+  else
+    echo -n "Confirm delete with 'y' (y/N): "
+    read CONFIRM
+    if [ "${CONFIRM}" != "y" ]; then
+      echo "Delete aborted."
+      exit 1
+    else
+      api_curl ${METHOD} ${URL}
+    fi
+  fi
+}
+

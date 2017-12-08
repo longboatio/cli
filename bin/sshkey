@@ -31,7 +31,10 @@ case "${ARGUMENT}" in
   ;;
 
 "delete")
-  api_curl DELETE /sshkey/$3/byname
+  api_curl GET /sshkey/$3
+  if [ "${CURL_CODE}" == "200" ]; then
+    confirm_delete DELETE /sshkey/$3
+  fi
   ;;
 
 *)

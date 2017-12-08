@@ -41,7 +41,7 @@ case "${ARGUMENT}" in
 "delete")
   api_curl GET /environments/$3
   if [ "${CURL_CODE}" == "200" ]; then
-    api_curl DELETE /environments/$3
+    confirm_delete DELETE /environments/$3
   fi
   ;;
 
