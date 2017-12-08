@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+for SECTION in id get list create delete add remove; do
+  cat ${BOATDIR}/help/group/${SECTION}
+done
+

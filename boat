@@ -53,6 +53,8 @@ case "${COMMAND}" in
   source ${BOATDIR}/bin/environment ; exit $? ;;
 "host")
   source ${BOATDIR}/bin/host ; exit $? ;;
+"group")
+  source ${BOATDIR}/bin/group ; exit $? ;;
 "auth")
   source ${BOATDIR}/bin/auth ; exit $? ;;
 "upgrade")

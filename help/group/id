@@ -1,0 +1,5 @@
+boat group id <group-id>
+
+    Get host group by id
+    Example: boat group id 12345
+

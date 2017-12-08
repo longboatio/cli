@@ -1,0 +1,5 @@
+boat group remove <group-id> <host-id>
+
+    Remove a host from a group by group-id and host-id
+    Examples: boat group remove 12345 54321
+
