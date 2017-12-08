@@ -1,0 +1,5 @@
+boat group add <group-id> <host-id>
+
+    Add a host to a group by group-id and host-id
+    Examples: boat group add 12345 54321
+

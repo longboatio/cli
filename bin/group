@@ -28,6 +28,16 @@ case "${ARGUMENT}" in
   fi
   ;;
 
+"add")
+  # FIXME: This should be done be group and host name - not id's
+  api_curl POST /group/$3/host host_id=$4
+  ;;
+
+"remove")
+  # FIXME: This should be done be group and host name - not id's
+  api_curl DELETE /group/$3/host host_id=$4
+  ;;
+
 *)
   echo "ERROR: Unknown group command! Try: boat group -h"
   exit 1
