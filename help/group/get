@@ -1,0 +1,5 @@
+boat group get <group-name>
+
+    Get host group by name
+    Example: boat group get webservers
+

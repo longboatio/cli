@@ -1,0 +1,5 @@
+boat group delete <group-id>
+
+    Delete  host group by it's ID.
+    Example: boat group delete 12345
+

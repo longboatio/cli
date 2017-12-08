@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+case "${ARGUMENT}" in
+"id")
+  api_curl GET /group/$3
+  ;;
+
+"get")
+  api_curl GET /group/name/$3 project_id=${LONGBOAT_PROJECT}
+  ;;
+
+"list")
+  if [ -z ${LONGBOAT_PROJECT} ]; then
+    api_curl GET /group
+  else
+    api_curl GET /group project_id=${LONGBOAT_PROJECT}
+  fi
+  ;;
+
+"create")
+  api_curl POST /group name=$3 project_id=${LONGBOAT_PROJECT}
+  ;;
+
+"delete")
+  api_curl GET /group/$3
+  if [ "${CURL_CODE}" == "200" ]; then
+    confirm_delete DELETE /group/$3
+  fi
+  ;;
+
+*)
+  echo "ERROR: Unknown group command! Try: boat group -h"
+  exit 1
+  ;;
+esac
+

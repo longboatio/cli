@@ -17,8 +17,9 @@ Organization commands:
 
 Project commands:
 
+  env         Manage environments.
   host        Manage hosts.
-  env         Manage environments
+  group       Manage host groups.
 
 Ansible commands:
 

@@ -1,0 +1,5 @@
+boat group create <group-name>
+
+    Creates a host group for a project.
+    Examples: boat group create webservers
+
