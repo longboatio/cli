@@ -23,6 +23,9 @@ if [ "${CURL_CODE}" == "200" ]; then
   done
 fi
 
+echo "==> Updating users hosts file ~/.longboat/hosts..."
+user_hosts_update
+
 echo "==> Git cloning Longboat Ansible roles..."
 mkdir -p ./roles
 if [ -d ./roles/longboat ]; then

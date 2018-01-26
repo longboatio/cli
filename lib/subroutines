@@ -58,3 +58,8 @@ function confirm_delete() {
   fi
 }
 
+function user_hosts_update() {
+  CURL_SILENT=true
+  api_curl GET /user/config/hosts
+  echo "${CURL_RESPONSE}" > ${USERHOSTS}
+}
