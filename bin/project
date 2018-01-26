@@ -15,6 +15,11 @@ case "${ARGUMENT}" in
 
 "create")
   api_curl POST /project name=$3 organization_name=$4
+  if [ "${CURL_CODE}" == "200" ]; then
+    PROJECTID=`echo "${CURL_RESPONSE}" | jq -r '.["id"]'`
+    echo "Hint! You might also want to run: boat init ${PROJECTID}"
+    echo "      FIXME: See docs for more information."
+  fi
   ;;
 
 "delete")
