@@ -13,10 +13,10 @@ if [ "${CURL_CODE}" == "200" ]; then
   echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
     echo "==> Writing: ${ENVNAME}..."
     echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
-    echo "" > ${PROJECTDIR}/${ENVNAME}
+    echo "" >> ${PROJECTDIR}/${ENVNAME}
     echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
     echo "# Changes will be overwritten every time someone does: boat pull" >> ${PROJECTDIR}/${ENVNAME}
-    echo "" > ${PROJECTDIR}/${ENVNAME}
+    echo "" >> ${PROJECTDIR}/${ENVNAME}
     echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
     echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
     chmod 755 ${PROJECTDIR}/${ENVNAME}
