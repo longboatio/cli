@@ -19,12 +19,14 @@ case "${ARGUMENT}" in
 
 "create")
   api_curl POST /hosts name=$3 environment_name=$4 project_id=${LONGBOAT_PROJECT} $5 $6
+  user_hosts_update
   ;;
 
 "delete")
   api_curl GET /hosts/$3
   if [ "${CURL_CODE}" == "200" ]; then
     confirm_delete DELETE /hosts/$3
+    user_hosts_update
   fi
   ;;
 
