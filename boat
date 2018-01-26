@@ -39,6 +39,10 @@ case "${COMMAND}" in
   source ${BOATDIR}/bin/doctor ; exit $? ;;
 "inventory")
   source ${BOATDIR}/bin/inventory ; exit $? ;;
+"init")
+  source ${BOATDIR}/bin/init ; exit $? ;;
+"pull")
+  source ${BOATDIR}/bin/pull ; exit $? ;;
 "sshkey")
   source ${BOATDIR}/bin/sshkey ; exit $? ;;
 "org")

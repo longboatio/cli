@@ -1,5 +1,0 @@
-boat project init <projectname> <organization-name>
-
-    Create, initialize and setup a new project locally.
-    Example: boat project init new-project example-corp
-

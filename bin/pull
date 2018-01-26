@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+if [ -z "${LONGBOAT_PROJECT}" ]; then
+  echo "ERROR: LONGBOAT_PROJECT not set - are you sure you're in a project directory?"
+  exit 1
+fi
+
+CURL_SILENT=true
+
+echo "==> Building environments..."
+api_curl GET /environments project_id=${LONGBOAT_PROJECT}
+if [ "${CURL_CODE}" == "200" ]; then
+  echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
+    echo "==> Writing: ${ENVNAME}..."
+    echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
+    echo "" > ${PROJECTDIR}/${ENVNAME}
+    echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
+    echo "# Changes will be overwritten every time someone does: boat pull" >> ${PROJECTDIR}/${ENVNAME}
+    echo "" > ${PROJECTDIR}/${ENVNAME}
+    echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
+    echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
+    chmod 755 ${PROJECTDIR}/${ENVNAME}
+  done
+fi
+
+echo "==> Git cloning Longboat Ansible roles..."
+mkdir -p ./roles
+if [ -d ./roles/longboat ]; then
+  cd ./roles/longboat
+  git pull --quiet
+else
+  git clone --quiet https://github.com/longboatio/roles.git roles/longboat
+fi

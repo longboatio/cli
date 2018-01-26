@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+if [ -z "${ARGUMENT}" ]; then
+  echo "ERROR: Missing argument"
+  exit 1
+fi
+
+PROJECTID="${ARGUMENT}"
+
+CURL_SILENT=true
+CURL_CONTINUE=true
+
+api_curl GET /project/${PROJECTID}
+if [ "${CURL_CODE}" == "200" ]; then
+  # Project name and destination directory
+  PROJECTNAME=`echo "${CURL_RESPONSE}" | jq -r '.["name"]'`
+  if [ -z "$3" ]; then
+    PROJECTDIR="${PROJECTNAME}"
+  else
+    PROJECTDIR="$3"
+  fi
+  if [ -d "./${PROJECTDIR}" ]; then
+    echo "ERROR: Directory already exists: ./${PROJECTDIR}"
+    exit 1
+  fi
+
+  #FIXME: Support for having a project in a custom git repository
+
+  echo "==> Cloning project into ${PROJECTDIR} directory..."
+  mkdir ./${PROJECTDIR}
+  cd ./${PROJECTDIR}
+
+  echo "==> Git init..."
+  git init --quiet
+
+  echo "==> Writing Longboat config to longboat.cfg..."
+  echo "# Longboat API Configuration" > longboat.cfg
+  echo "LONGBOAT_PROJECT=\"${PROJECTID}\"" >> longboat.cfg
+  git add longboat.cfg
+
+  echo "==> Adding default .gitignore file..."
+  cp ${BOATDIR}/files/gitignore .gitignore
+  git add .gitignore
+
+  echo "==> Adding default ansible.cfg..."
+  cp ${BOATDIR}/files/ansible.cfg ansible.cfg
+  git add ansible.cfg
+
+  # Run boat pull to get the automatically generated files
+  ${BOATDIR}/boat pull
+
+  echo "==> Creating initial git commit..."
+  git add .
+  git commit --quiet -m "Longboat project ${PROJECTNAME} initialized"
+
+  echo "==> Completed!"
+else
+  echo_json "${CURL_RESPONSE}"
+fi

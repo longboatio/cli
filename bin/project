@@ -13,48 +13,6 @@ case "${ARGUMENT}" in
   api_curl GET /project
   ;;
 
-"init")
-  NAME="$3"
-  ORGANIZATION="$4"
-  if [ -d "${NAME}" ]; then 
-    echo "==> ERROR: Directory ${NAME} exists."
-    exit 1
-  fi
-  echo "===> Creating Project ${NAME} ..."
-  api_curl POST /project name=${NAME} organization_name=${ORGANIZATION}
-  if [ "${CURL_CODE}" == "200" ]; then
-    PROJECTID=`echo "${CURL_RESPONSE}" | jq -r '.["id"]'`
-    mkdir ${NAME}
-    cd ${NAME}
-    git init --quiet
-
-    echo "===> Writing configuration file longboat.cfg"
-    echo "# Longboat API Configuration" > longboat.cfg
-    echo "LONGBOAT_PROJECT=\"${PROJECTID}\"" >> longboat.cfg
-    git add longboat.cfg
-
-    echo "===> Adding .gitignore file ..."
-    cp ${BOATDIR}/files/gitignore .gitignore
-    git add .gitignore
-
-    echo "===> Adding initial ansible.cfg ..."
-    cp ${BOATDIR}/files/ansible.cfg ansible.cfg
-    git add ansible.cfg
-
-    echo "===> Git cloning Longboat Ansible roles ..."
-    mkdir roles
-    git clone --quiet https://github.com/longboatio/roles.git roles/longboat
-
-    echo "===> Initial git commit ..."
-    git commit --quiet -m "Longboat project ${NAME} initialized"
-
-    echo "===> Done! Test is with: cd ${NAME} ; boat doctor"
-  else
-    echo "===> ERROR: Could not create project"
-    exit 1
-  fi
-  ;;
-
 "create")
   api_curl POST /project name=$3 organization_name=$4
   ;;
@@ -64,11 +22,6 @@ case "${ARGUMENT}" in
   if [ "${CURL_CODE}" == "200" ]; then
     confirm_delete DELETE /project/$3
   fi
-  ;;
-
-"sync")
-  echo "=> Syncing environments"
-  ${BOATDIR}/boat env sync
   ;;
 
 *)
