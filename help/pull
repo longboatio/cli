@@ -1,0 +1,8 @@
+Usage: boat pull
+
+Pull the latest changes from the Longboat Project. You need to be in a 
+project directory. The updates include:
+
+* Create (og recreate) all environment files
+* Git clone the Longboat roles repository (roles/longboat)
+

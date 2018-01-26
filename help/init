@@ -1,0 +1,11 @@
+Usage: boat init <project-id>
+
+Create a new directory, with initial project files. This is usually only done
+once and when the project is initially created.
+
+Afterwards we *highly* recommend that you push the git repository to a git
+service of your choice and add the git repository url to the project.
+
+New members of the team can then easily git clone the repository and get a
+flying start.
+

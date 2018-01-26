@@ -1,5 +1,7 @@
 Usage: boat <command> [<args>]
 
+  init        Intialize a new project directory.
+  pull        Get the latest updates from the project.
   upgrade     Pull latest version of CLI tools
   doctor      Check Longboat installation and project
 
