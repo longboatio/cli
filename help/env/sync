@@ -1,6 +1,0 @@
-boat env sync
-
-    Sync all environments into local executable files, so Ansible can use
-    them as inventories. Requires that you are in a project directory.
-    Example: boat env sync
-

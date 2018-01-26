@@ -1,8 +1,0 @@
-boat project sync
-
-    Pull all project files from Longboat and update them locally.
-    It will pull all environments (same as 'boat env sync') and
-    FIXME: Write what else it does :)
-
-    Example: boat project sync
-

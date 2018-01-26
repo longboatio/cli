@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-for SECTION in id get list sync create delete; do
+for SECTION in id get list create delete; do
   cat ${BOATDIR}/help/env/${SECTION}
 done
 

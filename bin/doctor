@@ -133,7 +133,7 @@ if [ -f ./longboat.cfg ]; then
     ok "Longboat roles found."
   else
     error "Longboat roles not found!"
-    space "You might need to run 'boat/setup' - FIXME: Link to docs"
+    space "You might need to run 'boat pull' - FIXME: Link to docs"
   fi
 
 else
