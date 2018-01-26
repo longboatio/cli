@@ -48,7 +48,7 @@ case "${ARGUMENT}" in
     echo "===> Initial git commit ..."
     git commit --quiet -m "Longboat project ${NAME} initialized"
 
-    echo "===> Done! Test is with: cd ${NAME} ; boat doctor"
+    echo "===> Done! Test it with: cd ${NAME} ; boat doctor"
   else
     echo "===> ERROR: Could not create project"
     exit 1
@@ -67,7 +67,7 @@ case "${ARGUMENT}" in
   ;;
 
 "sync")
-  echo "=> Syncing environments"
+  echo "=> Syncing environments..."
   ${BOATDIR}/boat env sync
   ;;
 
