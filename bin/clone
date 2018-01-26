@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# FIXME: Build boat clone
+
+echo "Sorry! boat clone hasn't been implemented yet."
+exit 1
