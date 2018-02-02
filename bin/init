@@ -24,9 +24,7 @@ if [ "${CURL_CODE}" == "200" ]; then
     exit 1
   fi
 
-  #FIXME: Support for having a project in a custom git repository
-
-  echo "==> Cloning project into ${PROJECTDIR} directory..."
+  echo "==> Creating project in ${PROJECTDIR} directory..."
   mkdir ./${PROJECTDIR}
   cd ./${PROJECTDIR}
 
