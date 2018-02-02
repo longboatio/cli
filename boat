@@ -63,9 +63,10 @@ case "${COMMAND}" in
 "auth")
   source ${BOATDIR}/bin/auth ; exit $? ;;
 "upgrade")
-  echo "Pulling latest version of Longboat CLI..."
+  echo "==> Pulling latest version of Longboat CLI..."
   cd ${BOATDIR} && git pull -q
-  exit $?
+  echo "==> We highly recommend running: boat doctor"
+  echo "==> It verifies Longboat CLI requirements, which might have changed."
   ;;
 *)
   echo "ERROR! Unknown command. Try: boat -h"

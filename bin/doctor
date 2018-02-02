@@ -40,9 +40,7 @@ if [ $? -eq 0 ]; then
 
   # Check curl version
   CURL_VERSION=`curl --version | head -1 | awk '{print $2}'`
-  if version_gt ${CURL_VERSION} 7.55.0; then
-    ok "curl v7.55.0 or greater (found v${CURL_VERSION})"
-  else
+  if ! version_gt ${CURL_VERSION} 7.55.0; then
     error "curl v7.55.0 or greater is required, but found v${CURL_VERSION}"
     space "Read more in FIXME: Link to docs"
   fi
@@ -73,6 +71,15 @@ fi
 command -v ansible > /dev/null
 if [ $? -eq 0 ]; then
   ok "ansible is installed"
+
+  # Check ansible version
+  ANSIBLE_VERSION=`ansible --version | head -1 | awk '{print $2}'`
+  ANSIBLE_MIN_VERSION="2.4.0"
+  if ! version_gt ${ANSIBLE_VERSION} ${ANSIBLE_MIN_VERSION}; then
+    info "ansible v${ANSIBLE_MIN_VERSION} or greater is highly recommended, but found v${ANSIBLE_VERSION}"
+    space "Ansible is not a requirement for Longboat CLI tools as such, but if"
+    space "you are planning on using the Longboat roles, it should be at least v${ANSIBLE_MIN_VERSION}"
+  fi
 else
   info "ansible command not found!"
   space "Ansible is not a requirement for Longboat CLI tools as such, but if"
