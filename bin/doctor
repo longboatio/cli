@@ -37,6 +37,15 @@ headline "Software Requirements"
 command -v curl > /dev/null
 if [ $? -eq 0 ]; then
   ok "curl is installed"
+
+  # Check curl version
+  CURL_VERSION=`curl --version | head -1 | awk '{print $2}'`
+  if version_gt ${CURL_VERSION} 7.55.0; then
+    ok "curl v7.55.0 or greater (found v${CURL_VERSION})"
+  else
+    error "curl v7.55.0 or greater is required, but found v${CURL_VERSION}"
+    space "Read more in FIXME: Link to docs"
+  fi
 else
   error "curl command not found!"
   space "Read more on FIXME: Link to docs"

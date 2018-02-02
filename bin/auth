@@ -14,8 +14,10 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     echo "==> Writing user config ${USERCONFIG}"
     if [ ! -d "${USERCONFIGDIR}" ]; then
       mkdir ${USERCONFIGDIR}
+      chmod 700 ${USERCONFIGDIR}
     fi
     echo "# Longboat API Configuration" > ${USERCONFIG}
+    chmod 600 ${USERCONFIG}
     echo "LONGBOAT_TOKEN=\"${TOKEN}\"" >> ${USERCONFIG}
     echo "LONGBOAT_PATH=\"${BOATDIR}\"" >> ${USERCONFIG}
     echo "==> Done. Test it with: boat doctor"
@@ -32,4 +34,3 @@ echo "content of LONGBOAT_TOKEN in ${USERCONFIG}"
 echo "or delete the file ${USERCONFIG} and afterwards run: boat auth"
 
 exit 1
-

@@ -8,7 +8,14 @@ function api_curl() {
   local ARGS=""
   local METHOD="$1"
   local URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2"
+  local CURL_HEADER="${USERCONFIGDIR}/curl_header"
 
+  # Create header file for CURL requests and keep it secret
+  touch ${CURL_HEADER}
+  chmod 600 ${CURL_HEADER}
+  echo "Authorization: ${LONGBOAT_TOKEN}" > ${CURL_HEADER}
+
+  # Create arguments for CURL request
   if [ $# -gt 2 ]; then
     for ARG in "${@:3}"; do
       ARGS="${ARGS} --data-urlencode ${ARG}"
@@ -18,7 +25,7 @@ function api_curl() {
   CURL_TMP="/tmp/longboat.curl.$$"
   touch ${CURL_TMP}
   chmod 600 ${CURL_TMP}
-  CURL_CODE=`curl -s -w "%{http_code}" -o "${CURL_TMP}" -H "Authorization: ${LONGBOAT_TOKEN}" ${ARGS} -X ${METHOD} "${URL}"`
+  CURL_CODE=`curl -s -w "%{http_code}" -o "${CURL_TMP}" --header "@${CURL_HEADER}" ${ARGS} -X ${METHOD} "${URL}"`
   CURL_EXIT="$?"
   CURL_RESPONSE=`cat ${CURL_TMP}`
   rm ${CURL_TMP}
@@ -58,8 +65,18 @@ function confirm_delete() {
   fi
 }
 
+function version_gt() {
+  test "$(printf '%s\n' "$@" | sort -V | head -n 1)" != "$1";
+}
+
+function user_dir_perms() {
+  chmod 700 ${USERCONFIGDIR}
+  chmod 600 ${USERCONFIG} ${USERHOSTS}
+}
+
 function user_hosts_update() {
   CURL_SILENT=true
   api_curl GET /user/config/hosts
   echo "${CURL_RESPONSE}" > ${USERHOSTS}
+  chmod 600 ${USERHOSTS}
 }
