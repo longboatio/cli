@@ -28,18 +28,25 @@ case "${ARGUMENT}" in
   api_curl GET /hosts/name/$3 project_id=${LONGBOAT_PROJECT} environment_name=$4
   if [ "${CURL_CODE}" == "200" ]; then
     ID=`echo "${CURL_RESPONSE}" | jq -r '.["id"]'`
-    FQDN=`echo "${CURL_RESPONSE}" | jq -r '.["fqdn"]'`
 
-    if [ "${FQDN}" == "null" ]; then
-      echo "ERROR: FQDN is not set for this host."
-      exit 1
+    # Determine best way to connect to host
+    HOST=`echo "${CURL_RESPONSE}" | jq -r '.["fqdn"]'`
+    if [ "${HOST}" == "null" ]; then
+      HOST=`echo "${CURL_RESPONSE}" | jq -r '.["ipv4"]'`
+      if [ "${HOST}" == "null" ]; then
+        HOST=`echo "${CURL_RESPONSE}" | jq -r '.["ipv6"]'`
+        if [ "${HOST}" == "null" ]; then
+          echo "ERROR: Neither FQDN, IPv4 or IPv6 set for this host."
+          exit 1
+        fi
+      fi
     fi
 
-    echo "==> Scanning host ${FQDN} - this might take a little while..."
-    KEYS=`ssh-keyscan ${FQDN} 2> /dev/null`
+    echo "==> Scanning host ${HOST} - this might take a little while..."
+    KEYS=`ssh-keyscan ${HOST} 2> /dev/null`
 
     if [ -z "${KEYS}" ]; then
-      echo "ERROR: No keys returned by: ssh-keyscan ${FQDN}"
+      echo "ERROR: No keys returned by: ssh-keyscan ${HOST}"
       exit 1
     fi
 
