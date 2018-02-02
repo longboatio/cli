@@ -1,0 +1,6 @@
+boat host keys <host-name> <environment-name>
+
+    Add host keys to host by name and environment, using ssh-keyscan to
+    retrieve the keys from the remote host. This requires a FQDN for the host.
+    It is not possible to overwrite exiting keys.
+    Example: boat host keys web1 prod

@@ -47,6 +47,14 @@ function api_curl() {
   fi
 }
 
+function confirm_continue() {
+  read CONFIRM
+  if [ "${CONFIRM}" != "y" ]; then
+    echo "aborted."
+    exit 1
+  fi
+}
+
 function confirm_delete() {
   local METHOD="$1"
   local URL="$2"
@@ -71,12 +79,21 @@ function version_gt() {
 
 function user_dir_perms() {
   chmod 700 ${USERCONFIGDIR}
-  chmod 600 ${USERCONFIG} ${USERHOSTS}
+  chmod 600 ${USERCONFIG}
 }
 
 function user_hosts_update() {
   CURL_SILENT=true
+
+  user_dir_perms
+
+  # Update hosts file
   api_curl GET /user/config/hosts
-  echo "${CURL_RESPONSE}" > ${USERHOSTS}
-  chmod 600 ${USERHOSTS}
+  echo "${CURL_RESPONSE}" > ${USERCONFIGDIR}/hosts
+  chmod 600 ${USERCONFIGDIR}/hosts
+
+  # Update known_hosts file
+  api_curl GET /user/config/known
+  echo "${CURL_RESPONSE}" > ${USERCONFIGDIR}/known_hosts
+  chmod 600 ${USERCONFIGDIR}/known_hosts
 }
