@@ -22,6 +22,48 @@ case "${ARGUMENT}" in
   user_hosts_update
   ;;
 
+"keys")
+  CURL_SILENT=true
+  CURL_CONTINUE=true
+  api_curl GET /hosts/name/$3 project_id=${LONGBOAT_PROJECT} environment_name=$4
+  if [ "${CURL_CODE}" == "200" ]; then
+    ID=`echo "${CURL_RESPONSE}" | jq -r '.["id"]'`
+    FQDN=`echo "${CURL_RESPONSE}" | jq -r '.["fqdn"]'`
+
+    if [ "${FQDN}" == "null" ]; then
+      echo "ERROR: FQDN is not set for this host."
+      exit 1
+    fi
+
+    echo "==> Scanning host ${FQDN} - this might take a little while..."
+    KEYS=`ssh-keyscan ${FQDN} 2> /dev/null`
+
+    if [ -z "${KEYS}" ]; then
+      echo "ERROR: No keys returned by: ssh-keyscan ${FQDN}"
+      exit 1
+    fi
+
+    echo "==> ssh-keyscan returned this:"
+    echo "${KEYS}"
+    echo -n "==> Add the keys? (y/N) "
+    confirm_continue
+
+    TMPFILE="/tmp/longboat.hostkeys.$$"
+    echo "${KEYS}" > ${TMPFILE}
+    api_curl POST /hosts/${ID}/keys hostkeys@${TMPFILE}
+    rm ${TMPFILE}
+    if [ "${CURL_CODE}" == "200" ]; then
+      echo "Success - host keys added."
+    else
+      echo_json "${CURL_RESPONSE}"
+      exit 1
+    fi
+  else
+    echo_json "${CURL_RESPONSE}"
+    exit 1
+  fi
+  ;;
+
 "delete")
   api_curl GET /hosts/$3
   if [ "${CURL_CODE}" == "200" ]; then

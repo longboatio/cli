@@ -47,6 +47,14 @@ function api_curl() {
   fi
 }
 
+function confirm_continue() {
+  read CONFIRM
+  if [ "${CONFIRM}" != "y" ]; then
+    echo "aborted."
+    exit 1
+  fi
+}
+
 function confirm_delete() {
   local METHOD="$1"
   local URL="$2"
