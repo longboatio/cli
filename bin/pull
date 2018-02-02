@@ -3,6 +3,7 @@
 CURL_SILENT=true
 
 echo "==> Updating users hosts file ~/.longboat/hosts..."
+user_dir_perms
 user_hosts_update
 
 if [ -z "${LONGBOAT_PROJECT}" ]; then
