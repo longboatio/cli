@@ -60,7 +60,8 @@ case "${ARGUMENT}" in
     api_curl POST /hosts/${ID}/keys hostkeys@${TMPFILE}
     rm ${TMPFILE}
     if [ "${CURL_CODE}" == "200" ]; then
-      echo "Success - host keys added."
+      echo "==> Success - host keys added!"
+      user_hosts_update
     else
       echo_json "${CURL_RESPONSE}"
       exit 1

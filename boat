@@ -7,7 +7,6 @@ BOATDIR=`dirname $0`
 PROJECTDIR=`pwd`
 USERCONFIGDIR="${HOME}/.longboat"
 USERCONFIG="${USERCONFIGDIR}/config"
-USERHOSTS="${USERCONFIGDIR}/hosts"
 
 # Subroutines
 source ${BOATDIR}/lib/subroutines || error "Could not load ${BOATDIR}/lib/subroutines"
