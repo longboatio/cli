@@ -109,7 +109,7 @@ if [ -f "${USERCONFIG}" ]; then
 else
   error "Longboat user config not found in: ${PURPLE}${USERCONFIG}${NC}"
   space "You won't be able to authenticate with Longboat and use the CLI tools."
-  space "You can create a new user here: https://gorm.longboat.io/register"
+  space "You can register a new user at https://www.longboat.io/"
   space "or authenticate an existing with: ${PURPLE}boat auth${NC}"
   space "More information: FIXME: Link to docs"
 fi
