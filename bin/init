@@ -47,6 +47,10 @@ if [ "${CURL_CODE}" == "200" ]; then
   cp ${BOATDIR}/files/site.yml site.yml
   git add site.yml
 
+  echo -e "==> Adding default ${BLUE}update.yml${NC}"
+  cp ${BOATDIR}/files/update.yml update.yml
+  git add update.yml
+
   # Run boat pull to get the automatically generated files
   ${BOATDIR}/boat pull
 
