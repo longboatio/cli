@@ -24,25 +24,28 @@ if [ "${CURL_CODE}" == "200" ]; then
     exit 1
   fi
 
-  echo "==> Creating project in ${PROJECTDIR} directory..."
+  echo -e "==> Creating project in directory ${BLUE}${PROJECTDIR}${NC}"
   mkdir ./${PROJECTDIR}
   cd ./${PROJECTDIR}
-
-  echo "==> Git init..."
   git init --quiet
 
-  echo "==> Writing Longboat config to longboat.cfg..."
+  echo -e "==> Writing config to ${BLUE}longboat.cfg${NC}"
   echo "# Longboat API Configuration" > longboat.cfg
   echo "LONGBOAT_PROJECT=\"${PROJECTID}\"" >> longboat.cfg
   git add longboat.cfg
 
-  echo "==> Adding default .gitignore file..."
+  # Adding default files
+  echo -e "==> Adding default ${BLUE}.gitignore${NC}"
   cp ${BOATDIR}/files/gitignore .gitignore
   git add .gitignore
 
-  echo "==> Adding default ansible.cfg..."
+  echo -e "==> Adding default ${BLUE}ansible.cfg${NC}"
   cp ${BOATDIR}/files/ansible.cfg ansible.cfg
   git add ansible.cfg
+
+  echo -e "==> Adding default ${BLUE}site.yml${NC}"
+  cp ${BOATDIR}/files/site.yml site.yml
+  git add site.yml
 
   # Run boat pull to get the automatically generated files
   ${BOATDIR}/boat pull
