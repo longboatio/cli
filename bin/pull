@@ -2,7 +2,7 @@
 
 CURL_SILENT=true
 
-echo "==> Updating local hosts and known_hosts file..."
+echo "==> Updating local hosts and known_hosts file"
 user_hosts_update
 
 if [ -z "${LONGBOAT_PROJECT}" ]; then
@@ -12,7 +12,7 @@ else
   api_curl GET /environments project_id=${LONGBOAT_PROJECT}
   if [ "${CURL_CODE}" == "200" ]; then
     echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
-      echo "==> Writing: ${ENVNAME}..."
+      echo "==> Writing environment: ${ENVNAME}"
       echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
       echo "" >> ${PROJECTDIR}/${ENVNAME}
       echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
@@ -26,11 +26,11 @@ else
 
   mkdir -p ./roles
   if [ -d ./roles/longboat ]; then
-    echo "==> Git pull Longboat Ansible roles..."
+    echo "==> Git pull Longboat Ansible roles"
     cd ./roles/longboat
     git pull --quiet
   else
-    echo "==> Git clone Longboat Ansible roles..."
+    echo "==> Git clone Longboat Ansible roles"
     git clone --quiet https://github.com/longboatio/roles.git roles/longboat
   fi
 
