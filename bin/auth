@@ -5,22 +5,45 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     echo ""
     echo "Config file already exists in ${USERCONFIG}"
   else
+    # Ask for Token
     echo "==> Longboat requires an API token. If you don't have one, get it"
     echo "==> from: https://gorm.longboat.io/token/list"
     echo ""
     echo -n "Longboat API Token: "
     read TOKEN
+
+    # Testing provided token against the API
     echo ""
-    echo "==> Writing user config ${USERCONFIG}"
+    echo "==> Testing provided token with API request.."
+    CURL_SILENT=true
+    CURL_CONTINUE=true
+    LONGBOAT_TOKEN="${TOKEN}"
+    api_curl GET /doctor/user
+    if [ "${CURL_CODE}" == "200" ]; then
+      echo -e "==> Token belongs to: ${GREEN}${CURL_RESPONSE}${NC}"
+    else
+      echo "Longboat API did not respond correctly - error was:"
+      echo "${CURL_RESPONSE}" | jq -r '.["errors"]'
+      exit 1
+    fi
+
+    # Ensure correct directory and file permissions
+    echo -e "==> Writing user config ${BLUE}${USERCONFIG}${NC}"
     if [ ! -d "${USERCONFIGDIR}" ]; then
       mkdir ${USERCONFIGDIR}
-      chmod 700 ${USERCONFIGDIR}
     fi
+    touch ${USERCONFIG}
+    user_dir_perms
+
+    # Write Longboat config file
     echo "# Longboat API Configuration" > ${USERCONFIG}
-    chmod 600 ${USERCONFIG}
     echo "LONGBOAT_TOKEN=\"${TOKEN}\"" >> ${USERCONFIG}
     echo "LONGBOAT_PATH=\"${BOATDIR}\"" >> ${USERCONFIG}
-    echo "==> Done. Test it with: boat doctor"
+
+    # Update user local files
+    user_hosts_update
+
+    echo "==> Done."
     exit 0
   fi
 else
@@ -29,8 +52,7 @@ else
 fi
 
 echo ""
-echo "If you really want to re-authenticate, either update the"
-echo "content of LONGBOAT_TOKEN in ${USERCONFIG}"
-echo "or delete the file ${USERCONFIG} and afterwards run: boat auth"
+echo "If you want to change your token, simply update the"
+echo "content of LONGBOAT_TOKEN in the file: ${USERCONFIG}"
 
 exit 1

@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-RED="\033[0;31m"
-GREEN="\033[0;32m"
-BLUE="\033[0;34m"
-PURPLE="\033[0;35m"
-NC="\033[0m"
 FOUNDERROR="false"
 CURL_CONTINUE="true"
 
@@ -114,7 +109,7 @@ if [ -f "${USERCONFIG}" ]; then
 else
   error "Longboat user config not found in: ${PURPLE}${USERCONFIG}${NC}"
   space "You won't be able to authenticate with Longboat and use the CLI tools."
-  space "You can create a new user with: ${PURPLE}boat register${NC}"
+  space "You can create a new user here: https://gorm.longboat.io/register"
   space "or authenticate an existing with: ${PURPLE}boat auth${NC}"
   space "More information: FIXME: Link to docs"
 fi
