@@ -15,6 +15,7 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     # Testing provided token against the API
     echo ""
     echo "==> Testing provided token with API request.."
+    mkdir ${USERCONFIGDIR}
     CURL_SILENT=true
     CURL_CONTINUE=true
     LONGBOAT_TOKEN="${TOKEN}"
