@@ -15,7 +15,7 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     # Testing provided token against the API
     echo ""
     echo "==> Testing provided token with API request.."
-    mkdir ${USERCONFIGDIR}
+    mkdir -p ${USERCONFIGDIR}
     CURL_SILENT=true
     CURL_CONTINUE=true
     LONGBOAT_TOKEN="${TOKEN}"
@@ -30,9 +30,6 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
 
     # Ensure correct directory and file permissions
     echo -e "==> Writing user config ${BLUE}${USERCONFIG}${NC}"
-    if [ ! -d "${USERCONFIGDIR}" ]; then
-      mkdir ${USERCONFIGDIR}
-    fi
     touch ${USERCONFIG}
     user_dir_perms
 
