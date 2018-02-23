@@ -18,7 +18,7 @@ case "${ARGUMENT}" in
   if [ "${CURL_CODE}" == "200" ]; then
     PROJECTID=`echo "${CURL_RESPONSE}" | jq -r '.["id"]'`
     echo "Hint! You might also want to run: boat init ${PROJECTID}"
-    echo "      FIXME: See docs for more information."
+    echo "      https://docs.longboat.io/getting-started.html#step-3-initialize-project"
   fi
   ;;
 

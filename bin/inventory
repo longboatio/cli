@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# FIXME: Add feature of local cache file
-
 CURL_SILENT=true
 api_curl GET /ansible/inventory/${LONGBOAT_PROJECT}/${ARGUMENT}
 if [ "${CURL_CODE}" == "200" ]; then
