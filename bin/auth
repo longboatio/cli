@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 
+# Check for curl
+command -v curl > /dev/null
+if [ $? -eq 0 ]; then
+  CURL_VERSION=`curl --version | head -1 | awk '{print $2}'`
+  if ! version_gt ${CURL_VERSION} 7.55.0; then
+    error "curl v7.55.0 or greater is required, but found v${CURL_VERSION}"
+    space "Read more in FIXME: Link to docs"
+    exit 1
+  fi
+else
+  error "curl command not found!"
+  space "curl is required for running the Longboat CLI tools."
+  space "Read more on FIXME: Link to docs"
+  exit 1
+fi
+
+# Check for jq
+command -v jq > /dev/null
+if [ $? -ne 0 ]; then
+  error "jq command not found!"
+  space "jq is required for running the Longboat CLI tools."
+  space "Please install jq: FIXME: Link to docs"
+  exit 1
+fi
+
 if [ -z "${LONGBOAT_TOKEN}" ]; then
   if [ -f "${USERCONFIG}" ]; then
     echo ""
@@ -15,7 +40,7 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     # Testing provided token against the API
     echo ""
     echo "==> Testing provided token with API request.."
-    mkdir ${USERCONFIGDIR}
+    mkdir -p ${USERCONFIGDIR}
     CURL_SILENT=true
     CURL_CONTINUE=true
     LONGBOAT_TOKEN="${TOKEN}"
@@ -30,9 +55,6 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
 
     # Ensure correct directory and file permissions
     echo -e "==> Writing user config ${BLUE}${USERCONFIG}${NC}"
-    if [ ! -d "${USERCONFIGDIR}" ]; then
-      mkdir ${USERCONFIGDIR}
-    fi
     touch ${USERCONFIG}
     user_dir_perms
 
