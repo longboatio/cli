@@ -8,7 +8,7 @@ PROJECTDIR=`pwd`
 USERCONFIGDIR="${HOME}/.longboat"
 USERCONFIG="${USERCONFIGDIR}/config"
 
-# Subroutines
+# Libs
 source ${BOATDIR}/lib/subroutines || error "Could not load ${BOATDIR}/lib/subroutines"
 
 # Default Longboat configuration

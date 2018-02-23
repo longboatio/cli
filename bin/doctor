@@ -3,29 +3,6 @@
 FOUNDERROR="false"
 CURL_CONTINUE="true"
 
-headline() {
-  echo ""
-  echo "===> $1"
-  echo ""
-}
-
-error() {
-  echo -e "[${RED}ERROR${NC}] $1"
-  FOUNDERROR="true"
-}
-
-info() {
-  echo -e " [${BLUE}INFO${NC}] $1"
-}
-
-ok() {
-  echo -e "   [${GREEN}OK${NC}] $1"
-}
-
-space() {
-  echo -e "        $1"
-}
-
 headline "Software Requirements"
 
 # Curl
