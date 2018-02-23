@@ -64,8 +64,7 @@ case "${COMMAND}" in
 "upgrade")
   echo "==> Pulling latest version of Longboat CLI..."
   cd ${BOATDIR} && git pull -q
-  echo "==> We highly recommend running: boat doctor"
-  echo "==> It verifies Longboat CLI requirements, which might have changed."
+  echo "==> ...done! We highly recommend running: boat doctor"
   ;;
 *)
   echo "ERROR! Unknown command. Try: boat -h"
