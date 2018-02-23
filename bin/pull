@@ -8,11 +8,10 @@ user_hosts_update
 if [ -z "${LONGBOAT_PROJECT}" ]; then
   echo "==> Skipping project updates, not in a Longboat project directory."
 else
-  echo "==> Building environments..."
+  echo "==> Updating environment files"
   api_curl GET /environments project_id=${LONGBOAT_PROJECT}
   if [ "${CURL_CODE}" == "200" ]; then
     echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
-      echo "==> Writing environment: ${ENVNAME}"
       echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
       echo "" >> ${PROJECTDIR}/${ENVNAME}
       echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
