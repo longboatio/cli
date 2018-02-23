@@ -6,13 +6,12 @@ if [ $? -eq 0 ]; then
   CURL_VERSION=`curl --version | head -1 | awk '{print $2}'`
   if ! version_gt ${CURL_VERSION} 7.55.0; then
     error "curl v7.55.0 or greater is required, but found v${CURL_VERSION}"
-    space "Read more in FIXME: Link to docs"
+    space "Read more on https://docs.longboat.io/cli/index.html#requirements"
     exit 1
   fi
 else
   error "curl command not found!"
-  space "curl is required for running the Longboat CLI tools."
-  space "Read more on FIXME: Link to docs"
+  space "Read more on https://docs.longboat.io/cli/index.html#requirements"
   exit 1
 fi
 
@@ -20,8 +19,7 @@ fi
 command -v jq > /dev/null
 if [ $? -ne 0 ]; then
   error "jq command not found!"
-  space "jq is required for running the Longboat CLI tools."
-  space "Please install jq: FIXME: Link to docs"
+  space "Read more on https://docs.longboat.io/cli/index.html#requirements"
   exit 1
 fi
 

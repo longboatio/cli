@@ -14,11 +14,11 @@ if [ $? -eq 0 ]; then
   CURL_VERSION=`curl --version | head -1 | awk '{print $2}'`
   if ! version_gt ${CURL_VERSION} 7.55.0; then
     error "curl v7.55.0 or greater is required, but found v${CURL_VERSION}"
-    space "Read more in FIXME: Link to docs"
+    space "Read more on https://docs.longboat.io/cli/index.html#requirements"
   fi
 else
   error "curl command not found!"
-  space "Read more on FIXME: Link to docs"
+  space "Read more on https://docs.longboat.io/cli/index.html#requirements"
 fi
 
 # Git
@@ -27,7 +27,7 @@ if [ $? -eq 0 ]; then
   ok "git is installed"
 else
   error "git command not found!"
-  space "Please install Git: FIXME: Link to docs"
+  space "Read more on https://docs.longboat.io/cli/index.html#requirements"
 fi
 
 # JQ
@@ -36,7 +36,7 @@ if [ $? -eq 0 ]; then
   ok "jq is installed"
 else
   error "jq command not found!"
-  space "Please install jq: FIXME: Link to docs"
+  space "Read more on https://docs.longboat.io/cli/index.html#requirements"
 fi
 
 # Ansible Playbook
@@ -56,7 +56,6 @@ else
   info "ansible command not found!"
   space "Ansible is not a requirement for Longboat CLI tools as such, but if"
   space "you are planning on using Ansible with Longboat, it should be installed."
-  space "FIXME: Link to docs"
 fi
 
 headline "Longboat User"
@@ -68,7 +67,8 @@ if [ -f "${USERCONFIG}" ]; then
   # API Token
   if [ -z "${LONGBOAT_TOKEN}" ]; then
     error "LONGBOAT_TOKEN not found!"
-    space "You might need to run 'boat auth' - FIXME: Link to docs"
+    space "You might need to run 'boat auth'"
+    space "Read more on https://docs.longboat.io/cli/index.html#authorization"
   else
     ok "Longboat token found"
   fi
@@ -81,14 +81,13 @@ if [ -f "${USERCONFIG}" ]; then
   else
     error "Longboat API did not respond correctly - error was:"
     space "${CURL_RESPONSE}"
-    space "Read more: FIXME: Link to docs"
   fi
 else
   error "Longboat user config not found in: ${PURPLE}${USERCONFIG}${NC}"
   space "You won't be able to authenticate with Longboat and use the CLI tools."
   space "You can register a new user at https://www.longboat.io/"
   space "or authenticate an existing with: ${PURPLE}boat auth${NC}"
-  space "More information: FIXME: Link to docs"
+  space "Read more on https://docs.longboat.io/cli/index.html#authorization"
 fi
 
 headline "Longboat Project"
@@ -100,7 +99,6 @@ if [ -f ./longboat.cfg ]; then
   # API Project
   if [ -z "${LONGBOAT_PROJECT}" ]; then
     error "LONGBOAT_PROJECT not found!"
-    space "You might need to run 'boat ???' - FIXME: Link to docs"
   else
     ok "Project ID: ${PURPLE}${LONGBOAT_PROJECT}${NC}"
   fi
@@ -113,7 +111,6 @@ if [ -f ./longboat.cfg ]; then
   else
     error "Longboat API did not respond correctly - error was:"
     space "${CURL_RESPONSE}"
-    space "Read more: FIXME: Link to docs"
   fi
 
   # Longboat roles
@@ -121,13 +118,11 @@ if [ -f ./longboat.cfg ]; then
     ok "Longboat roles found."
   else
     error "Longboat roles not found!"
-    space "You might need to run 'boat pull' - FIXME: Link to docs"
+    space "You might need to run: boat pull"
   fi
 
 else
-  info "Project config not found in ./longboat.cfg"
-  space "Skipping project tests."
-  space "More information: FIXME: Link to documentation"
+  info "Project config not found in ./longboat.cfg - skipping"
 fi
 
 headline "The Doctor's Conclusion"
