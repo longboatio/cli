@@ -2,35 +2,109 @@
 
 CURL_SILENT=true
 
-echo "==> Updating local hosts and known_hosts file"
+echo "==> Updating local user files"
 user_hosts_update
 
 if [ -z "${LONGBOAT_PROJECT}" ]; then
   echo "==> Skipping project updates, not in a Longboat project directory."
-else
-  echo "==> Updating environment files"
-  api_curl GET /environments project_id=${LONGBOAT_PROJECT}
-  if [ "${CURL_CODE}" == "200" ]; then
-    echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
-      echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
-      echo "" >> ${PROJECTDIR}/${ENVNAME}
-      echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
-      echo "# Changes will be overwritten every time someone does: boat pull" >> ${PROJECTDIR}/${ENVNAME}
-      echo "" >> ${PROJECTDIR}/${ENVNAME}
-      echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
-      echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
-      chmod 755 ${PROJECTDIR}/${ENVNAME}
-    done
-  fi
-
-  mkdir -p ./roles
-  if [ -d ./roles/longboat ]; then
-    echo "==> Git pull Longboat Ansible roles"
-    cd ./roles/longboat
-    git pull --quiet
-  else
-    echo "==> Git clone Longboat Ansible roles"
-    git clone --quiet https://github.com/longboatio/roles.git roles/longboat
-  fi
-
+  exit 0
 fi
+
+echo "==> Updating environments"
+api_curl GET /environments project_id=${LONGBOAT_PROJECT}
+if [ "${CURL_CODE}" == "200" ]; then
+  ENVIRONMENTS=`echo "${CURL_RESPONSE}" | jq -r '.[]["name"]'`
+  echo "${ENVIRONMENTS}" | while read ENVNAME ; do
+    echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
+    echo "" >> ${PROJECTDIR}/${ENVNAME}
+    echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
+    echo "# Changes will be overwritten every time someone does: boat pull" >> ${PROJECTDIR}/${ENVNAME}
+    echo "" >> ${PROJECTDIR}/${ENVNAME}
+    echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
+    echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
+    chmod 755 ${PROJECTDIR}/${ENVNAME}
+  done
+else
+  echo "ERROR: Could not get environments from api:"
+  echo_json "${CURL_RESPONSE}"
+fi
+
+if [ "${LONGBOAT_PULL_HOST_VARS}" == "true" ]; then
+  echo "==> Updating host_vars"
+  mkdir -p ${PROJECTDIR}/host_vars
+  api_curl GET /hosts project_id=${LONGBOAT_PROJECT}
+  if [ "${CURL_CODE}" == "200" ]; then
+    echo "${CURL_RESPONSE}" | jq -r '.[]["short"]' | while read HOST ; do
+      HOSTFILE="${PROJECTDIR}/host_vars/${HOST}.yml"
+      if [ ! -f "${HOSTFILE}" ]; then
+        echo "---" > ${HOSTFILE}
+        echo "# Host file for: ${HOST}" >> ${HOSTFILE}
+        echo "# Set variables only for ${HOST} in this file." >> ${HOSTFILE}
+        echo "" >> ${HOSTFILE}
+      fi
+    done
+  else
+    echo "ERROR: Could not get hosts from api:"
+    echo_json "${CURL_RESPONSE}"
+  fi
+fi
+
+if [ "${LONGBOAT_PULL_GROUP_VARS}" == "true" ]; then
+  echo "==> Updating group_vars"
+  mkdir -p ${PROJECTDIR}/group_vars
+  # All
+  GROUPDIR="${PROJECTDIR}/group_vars/all"
+  GROUPFILE="${GROUPDIR}/main.yml"
+  if [ ! -d "${GROUPDIR}" ]; then
+    mkdir ${GROUPDIR}
+    echo "---" > ${GROUPFILE}
+    echo "# Variables directory for all hosts across all environments" >> ${GROUPFILE}
+    echo "" >> ${GROUPFILE}
+  fi
+
+  # Environments
+  echo "${ENVIRONMENTS}" | while read ENVNAME ; do
+    GROUPDIR="${PROJECTDIR}/group_vars/${ENVNAME}"
+    GROUPFILE="${GROUPDIR}/main.yml"
+    if [ ! -d "${GROUPDIR}" ]; then
+      mkdir ${GROUPDIR}
+      echo "---" > ${GROUPFILE}
+      echo "# Group variables directory for environment: ${ENVNAME}" >> ${GROUPFILE}
+      echo "# Set variables for ${ENVNAME} environment in this file or in other" >> ${GROUPFILE}
+      echo "# files in this directory ending in .yml" >> ${GROUPFILE}
+      echo "" >> ${GROUPFILE}
+    fi
+  done
+
+  # Groups
+  api_curl GET /group project_id=${LONGBOAT_PROJECT}
+  if [ "${CURL_CODE}" == "200" ]; then
+    echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read GROUP ; do
+      GROUPDIR="${PROJECTDIR}/group_vars/${GROUP}"
+      GROUPFILE="${GROUPDIR}/main.yml"
+      if [ ! -d "${GROUPDIR}" ]; then
+        mkdir ${GROUPDIR}
+        echo "---" > ${GROUPFILE}
+        echo "# Group variables directory for group: ${GROUP}" >> ${GROUPFILE}
+        echo "# Set variables for group ${GROUP} in this file or in other" >> ${GROUPFILE}
+        echo "# files in this directory ending in .yml" >> ${GROUPFILE}
+        echo "" >> ${GROUPFILE}
+      fi
+    done
+  else
+    echo "ERROR: Could not get groups from api:"
+    echo_json "${CURL_RESPONSE}"
+  fi
+fi
+
+if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
+  ls roles | while read ROLE ; do
+    if [ -f "roles/${ROLE}/.git/config" ]; then
+      echo "==> Updating roles/${ROLE}"
+      cd ./roles/${ROLE}
+      git pull --quiet
+      cd ../../
+    fi
+  done
+fi
+

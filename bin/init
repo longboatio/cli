@@ -32,6 +32,11 @@ if [ "${CURL_CODE}" == "200" ]; then
   echo -e "==> Writing config to ${BLUE}longboat.cfg${NC}"
   echo "# Longboat API Configuration" > longboat.cfg
   echo "LONGBOAT_PROJECT=\"${PROJECTID}\"" >> longboat.cfg
+  echo "" >> longboat.cfg
+  echo "# Automatically create empty vars dirs and files for hosts, groups and" >> longboat.cfg
+  echo "# environments if they don't exist:" >> longboat.cfg
+  echo "#LONGBOAT_PULL_HOST_VARS=\"true\"" >> longboat.cfg
+  echo "#LONGBOAT_PULL_GROUP_VARS=\"true\"" >> longboat.cfg
   git add longboat.cfg
 
   # Adding default files
@@ -50,6 +55,10 @@ if [ "${CURL_CODE}" == "200" ]; then
   echo -e "==> Adding default ${BLUE}update.yml${NC}"
   cp ${BOATDIR}/files/update.yml update.yml
   git add update.yml
+
+  echo "==> Downloading Longboat Ansible roles"
+  mkdir roles
+  git clone --quiet https://github.com/longboatio/roles.git roles/longboat
 
   # Run boat pull to get the automatically generated files
   ${BOATDIR}/boat pull
