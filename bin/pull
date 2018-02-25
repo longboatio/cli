@@ -2,7 +2,7 @@
 
 CURL_SILENT=true
 
-echo "==> Updating local hosts and known_hosts file"
+echo "==> Updating local user files"
 user_hosts_update
 
 if [ -z "${LONGBOAT_PROJECT}" ]; then
@@ -10,10 +10,11 @@ if [ -z "${LONGBOAT_PROJECT}" ]; then
   exit 0
 fi
 
-echo "==> Updating environment files"
+echo "==> Updating environments"
 api_curl GET /environments project_id=${LONGBOAT_PROJECT}
 if [ "${CURL_CODE}" == "200" ]; then
-  echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
+  ENVIRONMENTS=`echo "${CURL_RESPONSE}" | jq -r '.[]["name"]'`
+  echo "${ENVIRONMENTS}" | while read ENVNAME ; do
     echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
     echo "" >> ${PROJECTDIR}/${ENVNAME}
     echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
@@ -28,8 +29,72 @@ else
   echo_json "${CURL_RESPONSE}"
 fi
 
-if [ "${LONGBOAT_PULL_VARS_FILES}" == "true" ]; then
-  echo "==> Updating host_vars and group_vars"
+if [ "${LONGBOAT_PULL_HOST_VARS}" == "true" ]; then
+  echo "==> Updating host_vars"
+  mkdir -p ${PROJECTDIR}/host_vars
+  api_curl GET /hosts project_id=${LONGBOAT_PROJECT}
+  if [ "${CURL_CODE}" == "200" ]; then
+    echo "${CURL_RESPONSE}" | jq -r '.[]["short"]' | while read HOST ; do
+      HOSTFILE="${PROJECTDIR}/host_vars/${HOST}.yml"
+      if [ ! -f "${HOSTFILE}" ]; then
+        echo "---" > ${HOSTFILE}
+        echo "# Host file for: ${HOST}" >> ${HOSTFILE}
+        echo "# Set variables only for ${HOST} in this file." >> ${HOSTFILE}
+        echo "" >> ${HOSTFILE}
+      fi
+    done
+  else
+    echo "ERROR: Could not get hosts from api:"
+    echo_json "${CURL_RESPONSE}"
+  fi
+fi
+
+if [ "${LONGBOAT_PULL_GROUP_VARS}" == "true" ]; then
+  echo "==> Updating group_vars"
+  mkdir -p ${PROJECTDIR}/group_vars
+  # All
+  GROUPDIR="${PROJECTDIR}/group_vars/all"
+  GROUPFILE="${GROUPDIR}/main.yml"
+  if [ ! -d "${GROUPDIR}" ]; then
+    mkdir ${GROUPDIR}
+    echo "---" > ${GROUPFILE}
+    echo "# Variables directory for all hosts across all environments" >> ${GROUPFILE}
+    echo "" >> ${GROUPFILE}
+  fi
+
+  # Environments
+  echo "${ENVIRONMENTS}" | while read ENVNAME ; do
+    GROUPDIR="${PROJECTDIR}/group_vars/${ENVNAME}"
+    GROUPFILE="${GROUPDIR}/main.yml"
+    if [ ! -d "${GROUPDIR}" ]; then
+      mkdir ${GROUPDIR}
+      echo "---" > ${GROUPFILE}
+      echo "# Group variables directory for environment: ${ENVNAME}" >> ${GROUPFILE}
+      echo "# Set variables for ${ENVNAME} environment in this file or in other" >> ${GROUPFILE}
+      echo "# files in this directory ending in .yml" >> ${GROUPFILE}
+      echo "" >> ${GROUPFILE}
+    fi
+  done
+
+  # Groups
+  api_curl GET /group project_id=${LONGBOAT_PROJECT}
+  if [ "${CURL_CODE}" == "200" ]; then
+    echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read GROUP ; do
+      GROUPDIR="${PROJECTDIR}/group_vars/${GROUP}"
+      GROUPFILE="${GROUPDIR}/main.yml"
+      if [ ! -d "${GROUPDIR}" ]; then
+        mkdir ${GROUPDIR}
+        echo "---" > ${GROUPFILE}
+        echo "# Group variables directory for group: ${GROUP}" >> ${GROUPFILE}
+        echo "# Set variables for group ${GROUP} in this file or in other" >> ${GROUPFILE}
+        echo "# files in this directory ending in .yml" >> ${GROUPFILE}
+        echo "" >> ${GROUPFILE}
+      fi
+    done
+  else
+    echo "ERROR: Could not get groups from api:"
+    echo_json "${CURL_RESPONSE}"
+  fi
 fi
 
 if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
