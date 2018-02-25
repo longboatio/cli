@@ -51,6 +51,10 @@ if [ "${CURL_CODE}" == "200" ]; then
   cp ${BOATDIR}/files/update.yml update.yml
   git add update.yml
 
+  echo "==> Downloading Longboat Ansible roles"
+  mkdir roles
+  git clone --quiet https://github.com/longboatio/roles.git roles/longboat
+
   # Run boat pull to get the automatically generated files
   ${BOATDIR}/boat pull
 

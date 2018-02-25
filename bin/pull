@@ -7,30 +7,39 @@ user_hosts_update
 
 if [ -z "${LONGBOAT_PROJECT}" ]; then
   echo "==> Skipping project updates, not in a Longboat project directory."
-else
-  echo "==> Updating environment files"
-  api_curl GET /environments project_id=${LONGBOAT_PROJECT}
-  if [ "${CURL_CODE}" == "200" ]; then
-    echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
-      echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
-      echo "" >> ${PROJECTDIR}/${ENVNAME}
-      echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
-      echo "# Changes will be overwritten every time someone does: boat pull" >> ${PROJECTDIR}/${ENVNAME}
-      echo "" >> ${PROJECTDIR}/${ENVNAME}
-      echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
-      echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
-      chmod 755 ${PROJECTDIR}/${ENVNAME}
-    done
-  fi
-
-  mkdir -p ./roles
-  if [ -d ./roles/longboat ]; then
-    echo "==> Git pull Longboat Ansible roles"
-    cd ./roles/longboat
-    git pull --quiet
-  else
-    echo "==> Git clone Longboat Ansible roles"
-    git clone --quiet https://github.com/longboatio/roles.git roles/longboat
-  fi
-
+  exit 0
 fi
+
+echo "==> Updating environment files"
+api_curl GET /environments project_id=${LONGBOAT_PROJECT}
+if [ "${CURL_CODE}" == "200" ]; then
+  echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read ENVNAME ; do
+    echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
+    echo "" >> ${PROJECTDIR}/${ENVNAME}
+    echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
+    echo "# Changes will be overwritten every time someone does: boat pull" >> ${PROJECTDIR}/${ENVNAME}
+    echo "" >> ${PROJECTDIR}/${ENVNAME}
+    echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
+    echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
+    chmod 755 ${PROJECTDIR}/${ENVNAME}
+  done
+else
+  echo "ERROR: Could not get environments from api:"
+  echo_json "${CURL_RESPONSE}"
+fi
+
+if [ "${LONGBOAT_PULL_VARS_FILES}" == "true" ]; then
+  echo "==> Updating host_vars and group_vars"
+fi
+
+if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
+  ls roles | while read ROLE ; do
+    if [ -f "roles/${ROLE}/.git/config" ]; then
+      echo "==> Updating roles/${ROLE}"
+      cd ./roles/${ROLE}
+      git pull --quiet
+      cd ../../
+    fi
+  done
+fi
+
