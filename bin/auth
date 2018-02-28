@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 # Check for curl
-command -v curl > /dev/null
-if [ $? -eq 0 ]; then
-  CURL_VERSION=`curl --version | head -1 | awk '{print $2}'`
-  if ! version_gt ${CURL_VERSION} 7.55.0; then
+if command -v curl > /dev/null
+then
+  CURL_VERSION=$(curl --version | head -1 | awk '{print $2}')
+  if ! version_gt "${CURL_VERSION}" "7.55.0"
+  then
     error "curl v7.55.0 or greater is required, but found v${CURL_VERSION}"
     space "Read more on https://docs.longboat.io/cli/index.html#requirements"
     exit 1
@@ -16,8 +17,8 @@ else
 fi
 
 # Check for jq
-command -v jq > /dev/null
-if [ $? -ne 0 ]; then
+if ! command -v jq > /dev/null
+then
   error "jq command not found!"
   space "Read more on https://docs.longboat.io/cli/index.html#requirements"
   exit 1
@@ -33,12 +34,12 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     echo "==> from: https://gorm.longboat.io/token/list"
     echo ""
     echo -n "Longboat API Token: "
-    read TOKEN
+    read -r TOKEN
 
     # Testing provided token against the API
     echo ""
     echo "==> Testing provided token with API request.."
-    mkdir -p ${USERCONFIGDIR}
+    mkdir -p "${USERCONFIGDIR}"
     CURL_SILENT=true
     CURL_CONTINUE=true
     LONGBOAT_TOKEN="${TOKEN}"
@@ -53,13 +54,13 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
 
     # Ensure correct directory and file permissions
     echo -e "==> Writing user config ${BLUE}${USERCONFIG}${NC}"
-    touch ${USERCONFIG}
+    touch "${USERCONFIG}"
     user_dir_perms
 
     # Write Longboat config file
-    echo "# Longboat API Configuration" > ${USERCONFIG}
-    echo "LONGBOAT_TOKEN=\"${TOKEN}\"" >> ${USERCONFIG}
-    echo "LONGBOAT_PATH=\"${BOATDIR}\"" >> ${USERCONFIG}
+    echo "# Longboat API Configuration" > "${USERCONFIG}"
+    echo "LONGBOAT_TOKEN=\"${TOKEN}\"" >> "${USERCONFIG}"
+    echo "LONGBOAT_PATH=\"${BOATDIR}\"" >> "${USERCONFIG}"
 
     # Update user local files
     user_hosts_update
