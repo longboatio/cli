@@ -11,18 +11,20 @@ if [ -z "${LONGBOAT_PROJECT}" ]; then
 fi
 
 echo "==> Updating environments"
-api_curl GET /environments project_id=${LONGBOAT_PROJECT}
+api_curl GET /environments "project_id=${LONGBOAT_PROJECT}"
 if [ "${CURL_CODE}" == "200" ]; then
-  ENVIRONMENTS=`echo "${CURL_RESPONSE}" | jq -r '.[]["name"]'`
-  echo "${ENVIRONMENTS}" | while read ENVNAME ; do
-    echo "#!/usr/bin/env bash" > ${PROJECTDIR}/${ENVNAME}
-    echo "" >> ${PROJECTDIR}/${ENVNAME}
-    echo "# DO NOT CHANGE THIS FILE!" >> ${PROJECTDIR}/${ENVNAME}
-    echo "# Changes will be overwritten every time someone does: boat pull" >> ${PROJECTDIR}/${ENVNAME}
-    echo "" >> ${PROJECTDIR}/${ENVNAME}
-    echo "source \${HOME}/.longboat/config" >> ${PROJECTDIR}/${ENVNAME}
-    echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}" >> ${PROJECTDIR}/${ENVNAME}
-    chmod 755 ${PROJECTDIR}/${ENVNAME}
+  ENVIRONMENTS=$(echo "${CURL_RESPONSE}" | jq -r '.[]["name"]')
+  echo "${ENVIRONMENTS}" | while read -r ENVNAME ; do
+    {
+      echo "#!/usr/bin/env bash"
+      echo ""
+      echo "# DO NOT CHANGE THIS FILE!"
+      echo "# Changes will be overwritten every time someone does: boat pull"
+      echo ""
+      echo "source \${HOME}/.longboat/config"
+      echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}"
+    } > "${PROJECTDIR}/${ENVNAME}"
+    chmod 755 "${PROJECTDIR}/${ENVNAME}"
   done
 else
   echo "ERROR: Could not get environments from api:"
@@ -31,16 +33,18 @@ fi
 
 if [ "${LONGBOAT_PULL_HOST_VARS}" == "true" ]; then
   echo "==> Updating host_vars"
-  mkdir -p ${PROJECTDIR}/host_vars
-  api_curl GET /hosts project_id=${LONGBOAT_PROJECT}
+  mkdir -p "${PROJECTDIR}/host_vars"
+  api_curl GET /hosts "project_id=${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
-    echo "${CURL_RESPONSE}" | jq -r '.[]["short"]' | while read HOST ; do
+    echo "${CURL_RESPONSE}" | jq -r '.[]["short"]' | while read -r HOST ; do
       HOSTFILE="${PROJECTDIR}/host_vars/${HOST}.yml"
       if [ ! -f "${HOSTFILE}" ]; then
-        echo "---" > ${HOSTFILE}
-        echo "# Host file for: ${HOST}" >> ${HOSTFILE}
-        echo "# Set variables only for ${HOST} in this file." >> ${HOSTFILE}
-        echo "" >> ${HOSTFILE}
+        {
+          echo "---"
+          echo "# Host file for: ${HOST}"
+          echo "# Set variables only for ${HOST} in this file."
+          echo ""
+        } > "${HOSTFILE}"
       fi
     done
   else
@@ -51,44 +55,50 @@ fi
 
 if [ "${LONGBOAT_PULL_GROUP_VARS}" == "true" ]; then
   echo "==> Updating group_vars"
-  mkdir -p ${PROJECTDIR}/group_vars
+  mkdir -p "${PROJECTDIR}/group_vars"
   # All
   GROUPDIR="${PROJECTDIR}/group_vars/all"
   GROUPFILE="${GROUPDIR}/main.yml"
   if [ ! -d "${GROUPDIR}" ]; then
-    mkdir ${GROUPDIR}
-    echo "---" > ${GROUPFILE}
-    echo "# Variables directory for all hosts across all environments" >> ${GROUPFILE}
-    echo "" >> ${GROUPFILE}
+    mkdir "${GROUPDIR}"
+    {    
+      echo "---"
+      echo "# Variables directory for all hosts across all environments"
+      echo ""
+    } > "${GROUPFILE}"
   fi
 
   # Environments
-  echo "${ENVIRONMENTS}" | while read ENVNAME ; do
+  echo "${ENVIRONMENTS}" | while read -r ENVNAME ; do
     GROUPDIR="${PROJECTDIR}/group_vars/${ENVNAME}"
     GROUPFILE="${GROUPDIR}/main.yml"
     if [ ! -d "${GROUPDIR}" ]; then
-      mkdir ${GROUPDIR}
-      echo "---" > ${GROUPFILE}
-      echo "# Group variables directory for environment: ${ENVNAME}" >> ${GROUPFILE}
-      echo "# Set variables for ${ENVNAME} environment in this file or in other" >> ${GROUPFILE}
-      echo "# files in this directory ending in .yml" >> ${GROUPFILE}
-      echo "" >> ${GROUPFILE}
+      mkdir "${GROUPDIR}"
+      {
+        echo "---"
+        echo "# Group variables directory for environment: ${ENVNAME}"
+        echo "# Set variables for ${ENVNAME} environment in this file or in other"
+        echo "# files in this directory ending in .yml"
+        echo ""
+        } > "${GROUPFILE}"
     fi
   done
 
   # Groups
-  api_curl GET /group project_id=${LONGBOAT_PROJECT}
+  api_curl GET /group "project_id=${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
-    echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read GROUP ; do
+    echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read -r GROUP ; do
       GROUPDIR="${PROJECTDIR}/group_vars/${GROUP}"
       GROUPFILE="${GROUPDIR}/main.yml"
       if [ ! -d "${GROUPDIR}" ]; then
-        mkdir ${GROUPDIR}
-        echo "---" > ${GROUPFILE}
-        echo "# Group variables directory for group: ${GROUP}" >> ${GROUPFILE}
-        echo "# Set variables for group ${GROUP} in this file or in other" >> ${GROUPFILE}
-        echo "# files in this directory ending in .yml" >> ${GROUPFILE}
-        echo "" >> ${GROUPFILE}
+        mkdir "${GROUPDIR}"
+        {
+          echo "---"
+          echo "# Group variables directory for group: ${GROUP}"
+          echo "# Set variables for group ${GROUP} in this file or in other"
+          echo "# files in this directory ending in .yml"
+          echo ""
+        } > "${GROUPFILE}"
       fi
     done
   else
@@ -98,12 +108,12 @@ if [ "${LONGBOAT_PULL_GROUP_VARS}" == "true" ]; then
 fi
 
 if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
-  ls roles | while read ROLE ; do
-    if [ -f "roles/${ROLE}/.git/config" ]; then
+  find roles -maxdepth 1 -not -path "roles" | while read -r ROLE ; do
+    if [ -f "${ROLE}/.git/config" ]; then
       echo "==> Updating roles/${ROLE}"
-      cd ./roles/${ROLE}
+      cd "./${ROLE}" || exit
       git pull --quiet
-      cd ../../
+      cd ../../ || exit
     fi
   done
 fi
