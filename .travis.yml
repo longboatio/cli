@@ -1,5 +1,11 @@
+dist: trusty
 language: bash
-dist: xenial
+sudo: required
+
+before_install:
+  - sudo apt-add-repository "deb http://archive.ubuntu.com/ubuntu trusty-backports main restricted universe multiverse"
+  - sudo apt-get -qq update
+  - sudo apt-get -t trusty-backports install shellcheck
 
 script:
   - shellcheck --version
