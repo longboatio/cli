@@ -1,7 +1,6 @@
 language: bash
 dist: xenial
 
-# Needs to run with -ax in the future
 script:
-  - shellcheck -x boat
+  - shellcheck -ax boat
 
