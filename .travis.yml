@@ -2,5 +2,6 @@ language: bash
 dist: xenial
 
 script:
+  - shellcheck --version
   - shellcheck -ax boat
 
