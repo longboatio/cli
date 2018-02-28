@@ -6,13 +6,13 @@ CURL_CONTINUE="true"
 headline "Software Requirements"
 
 # Curl
-command -v curl > /dev/null
-if [ $? -eq 0 ]; then
+if command -v curl > /dev/null
+then
   ok "curl is installed"
 
   # Check curl version
-  CURL_VERSION=`curl --version | head -1 | awk '{print $2}'`
-  if ! version_gt ${CURL_VERSION} 7.55.0; then
+  CURL_VERSION=$(curl --version | head -1 | awk '{print $2}')
+  if ! version_gt "${CURL_VERSION}" "7.55.0"; then
     error "curl v7.55.0 or greater is required, but found v${CURL_VERSION}"
     space "Read more on https://docs.longboat.io/cli/index.html#requirements"
   fi
@@ -22,8 +22,8 @@ else
 fi
 
 # Git
-command -v git > /dev/null
-if [ $? -eq 0 ]; then
+if command -v git > /dev/null
+then
   ok "git is installed"
 else
   error "git command not found!"
@@ -31,8 +31,8 @@ else
 fi
 
 # JQ
-command -v jq > /dev/null
-if [ $? -eq 0 ]; then
+if command -v jq > /dev/null
+then
   ok "jq is installed"
 else
   error "jq command not found!"
@@ -40,14 +40,14 @@ else
 fi
 
 # Ansible Playbook
-command -v ansible > /dev/null
-if [ $? -eq 0 ]; then
+if command -v ansible > /dev/null
+then
   ok "ansible is installed"
 
   # Check ansible version
-  ANSIBLE_VERSION=`ansible --version | head -1 | awk '{print $2}'`
+  ANSIBLE_VERSION=$(ansible --version | head -1 | awk '{print $2}')
   ANSIBLE_MIN_VERSION="2.4.0"
-  if ! version_gt ${ANSIBLE_VERSION} ${ANSIBLE_MIN_VERSION}; then
+  if ! version_gt "${ANSIBLE_VERSION}" "${ANSIBLE_MIN_VERSION}"; then
     info "ansible v${ANSIBLE_MIN_VERSION} or greater is highly recommended, but found v${ANSIBLE_VERSION}"
     space "Ansible is not a requirement for Longboat CLI tools as such, but if"
     space "you are planning on using the Longboat roles, it should be at least v${ANSIBLE_MIN_VERSION}"
@@ -105,7 +105,7 @@ if [ -f ./longboat.cfg ]; then
 
   # Test API Project Request
   CURL_SILENT=true
-  api_curl GET /doctor/project/${LONGBOAT_PROJECT}
+  api_curl GET "/doctor/project/${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
     ok "API says project name is: ${PURPLE}${CURL_RESPONSE}${NC}"
   else
@@ -133,7 +133,7 @@ if [ "${FOUNDERROR}" == "true" ]; then
   exit 1
 fi
 
-ok "No errors \o/"
+ok "No errors :)"
 echo ""
 exit 0
 
