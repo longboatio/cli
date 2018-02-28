@@ -2,5 +2,5 @@ language: bash
 dist: xenial
 
 script:
-  - shellcheck boat
+  - shellcheck -x boat
 
