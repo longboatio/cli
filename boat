@@ -3,67 +3,86 @@
 COMMAND="$1"
 ARGUMENT="$2"
 
-BOATDIR=`dirname $0`
-PROJECTDIR=`pwd`
+BOATDIR=$(dirname "$0")
+PROJECTDIR=$(pwd)
 USERCONFIGDIR="${HOME}/.longboat"
 USERCONFIG="${USERCONFIGDIR}/config"
 
 # Libs
-source ${BOATDIR}/lib/subroutines || error "Could not load ${BOATDIR}/lib/subroutines"
+# shellcheck source=lib/subroutines
+source "${BOATDIR}/lib/subroutines" || error "Could not load ${BOATDIR}/lib/subroutines"
 
 # Default Longboat configuration
-source ${BOATDIR}/etc/defaults.cfg || error "Could not load ${BOATDIR}/etc/defaults.cfg"
+# shellcheck source=etc/defaults.cfg
+source "${BOATDIR}/etc/defaults.cfg" || error "Could not load ${BOATDIR}/etc/defaults.cfg"
 
 # User configuration
 if [ -f "${USERCONFIG}" ]; then
-  source ${USERCONFIG}
+  # shellcheck disable=SC1090
+  source "${USERCONFIG}"
 fi
 
 # Project configuration
 if [ -f "${PROJECTDIR}/longboat.cfg" ]; then
-  source ${PROJECTDIR}/longboat.cfg
+  # shellcheck disable=SC1090
+  source "${PROJECTDIR}/longboat.cfg"
 fi
 
 # Check for -h or --help
 for HELPARG in "$@"; do
   case "${HELPARG}" in
   "-h")
-    source ${BOATDIR}/bin/help ; exit 0 ;;
+    # shellcheck source=bin/help
+    source "${BOATDIR}/bin/help" ; exit 0 ;;
   "--help")
-    source ${BOATDIR}/bin/help ; exit 0 ;;
+    # shellcheck source=bin/help
+    source "${BOATDIR}/bin/help" ; exit 0 ;;
   esac
 done
 
 case "${COMMAND}" in
 "doctor")
-  source ${BOATDIR}/bin/doctor ; exit $? ;;
+  # shellcheck source=bin/doctor
+  source "${BOATDIR}/bin/doctor" ; exit $? ;;
 "inventory")
-  source ${BOATDIR}/bin/inventory ; exit $? ;;
+  # shellcheck source=bin/inventory
+  source "${BOATDIR}/bin/inventory" ; exit $? ;;
 "init")
-  source ${BOATDIR}/bin/init ; exit $? ;;
+  # shellcheck source=bin/init
+  source "${BOATDIR}/bin/init" ; exit $? ;;
 "pull")
-  source ${BOATDIR}/bin/pull ; exit $? ;;
+  # shellcheck source=bin/pull
+  source "${BOATDIR}/bin/pull" ; exit $? ;;
 "sshkey")
-  source ${BOATDIR}/bin/sshkey ; exit $? ;;
+  # shellcheck source=bin/sshkey
+  source "${BOATDIR}/bin/sshkey" ; exit $? ;;
 "org")
-  source ${BOATDIR}/bin/organization ; exit $? ;;
+  # shellcheck source=bin/organization
+  source "${BOATDIR}/bin/organization" ; exit $? ;;
 "domain")
-  source ${BOATDIR}/bin/domain ; exit $? ;;
+  # shellcheck source=bin/domain
+  source "${BOATDIR}/bin/domain" ; exit $? ;;
 "rr")
-  source ${BOATDIR}/bin/rr ; exit $? ;;
+  # shellcheck source=bin/rr
+  source "${BOATDIR}/bin/rr" ; exit $? ;;
 "project")
-  source ${BOATDIR}/bin/project ; exit $? ;;
+  # shellcheck source=bin/project
+  source "${BOATDIR}/bin/project" ; exit $? ;;
 "env")
-  source ${BOATDIR}/bin/environment ; exit $? ;;
+  # shellcheck source=bin/environment
+  source "${BOATDIR}/bin/environment" ; exit $? ;;
 "host")
-  source ${BOATDIR}/bin/host ; exit $? ;;
+  # shellcheck source=bin/host
+  source "${BOATDIR}/bin/host" ; exit $? ;;
 "group")
-  source ${BOATDIR}/bin/group ; exit $? ;;
+  # shellcheck source=bin/group
+  source "${BOATDIR}/bin/group" ; exit $? ;;
 "auth")
-  source ${BOATDIR}/bin/auth ; exit $? ;;
+  # shellcheck source=bin/auth
+  source "${BOATDIR}/bin/auth" ; exit $? ;;
 "upgrade")
   echo "==> Pulling latest version of Longboat CLI..."
-  cd ${BOATDIR} && git pull -q
+  cd "${BOATDIR}" && git pull -q
   echo "==> ...done! We highly recommend running: boat doctor"
   ;;
 *)
