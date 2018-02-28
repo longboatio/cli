@@ -10,10 +10,10 @@ PROJECTID="${ARGUMENT}"
 CURL_SILENT=true
 CURL_CONTINUE=true
 
-api_curl GET /project/${PROJECTID}
+api_curl GET "/project/${PROJECTID}"
 if [ "${CURL_CODE}" == "200" ]; then
   # Project name and destination directory
-  PROJECTNAME=`echo "${CURL_RESPONSE}" | jq -r '.["name"]'`
+  PROJECTNAME=$(echo "${CURL_RESPONSE}" | jq -r '.["name"]')
   if [ -z "$3" ]; then
     PROJECTDIR="${PROJECTNAME}"
   else
@@ -25,35 +25,37 @@ if [ "${CURL_CODE}" == "200" ]; then
   fi
 
   echo -e "==> Creating project in directory ${BLUE}${PROJECTDIR}${NC}"
-  mkdir ./${PROJECTDIR}
-  cd ./${PROJECTDIR}
+  mkdir "./${PROJECTDIR}"
+  cd "./${PROJECTDIR}" || exit
   git init --quiet
 
   echo -e "==> Writing config to ${BLUE}longboat.cfg${NC}"
-  echo "# Longboat API Configuration" > longboat.cfg
-  echo "LONGBOAT_PROJECT=\"${PROJECTID}\"" >> longboat.cfg
-  echo "" >> longboat.cfg
-  echo "# Automatically create empty vars dirs and files for hosts, groups and" >> longboat.cfg
-  echo "# environments if they don't exist:" >> longboat.cfg
-  echo "#LONGBOAT_PULL_HOST_VARS=\"true\"" >> longboat.cfg
-  echo "#LONGBOAT_PULL_GROUP_VARS=\"true\"" >> longboat.cfg
+  {
+    echo "# Longboat API Configuration"
+    echo "LONGBOAT_PROJECT=\"${PROJECTID}\""
+    echo ""
+    echo "# Automatically create empty vars dirs and files for hosts, groups and"
+    echo "# environments if they don't exist:"
+    echo "#LONGBOAT_PULL_HOST_VARS=\"true\""
+    echo "#LONGBOAT_PULL_GROUP_VARS=\"true\""
+  } > longboat.cfg
   git add longboat.cfg
 
   # Adding default files
   echo -e "==> Adding default ${BLUE}.gitignore${NC}"
-  cp ${BOATDIR}/files/gitignore .gitignore
+  cp "${BOATDIR}/files/gitignore" .gitignore
   git add .gitignore
 
   echo -e "==> Adding default ${BLUE}ansible.cfg${NC}"
-  cp ${BOATDIR}/files/ansible.cfg ansible.cfg
+  cp "${BOATDIR}/files/ansible.cfg" ansible.cfg
   git add ansible.cfg
 
   echo -e "==> Adding default ${BLUE}site.yml${NC}"
-  cp ${BOATDIR}/files/site.yml site.yml
+  cp "${BOATDIR}/files/site.yml" site.yml
   git add site.yml
 
   echo -e "==> Adding default ${BLUE}update.yml${NC}"
-  cp ${BOATDIR}/files/update.yml update.yml
+  cp "${BOATDIR}/files/update.yml" update.yml
   git add update.yml
 
   echo "==> Downloading Longboat Ansible roles"
@@ -61,7 +63,7 @@ if [ "${CURL_CODE}" == "200" ]; then
   git clone --quiet https://github.com/longboatio/roles.git roles/longboat
 
   # Run boat pull to get the automatically generated files
-  ${BOATDIR}/boat pull
+  "${BOATDIR}/boat" pull
 
   echo "==> Creating initial git commit..."
   git add .

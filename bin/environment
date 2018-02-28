@@ -2,32 +2,32 @@
 
 case "${ARGUMENT}" in
 "id")
-  api_curl GET /environments/$3
+  api_curl GET "/environments/$3"
   ;;
 
 "get")
-  api_curl GET /environments/name/$3 project_id=${LONGBOAT_PROJECT}
+  api_curl GET "/environments/name/$3" "project_id=${LONGBOAT_PROJECT}"
   ;;
 
 "list")
-  if [ -z ${LONGBOAT_PROJECT} ]; then
+  if [ -z "${LONGBOAT_PROJECT}" ]; then
     api_curl GET /environments
   else
-    api_curl GET /environments project_id=${LONGBOAT_PROJECT}
+    api_curl GET /environments "project_id=${LONGBOAT_PROJECT}"
   fi
   ;;
 
 "create")
-  api_curl POST /environments name=$3 project_id=${LONGBOAT_PROJECT} $4 $5
+  api_curl POST /environments "name=$3" "project_id=${LONGBOAT_PROJECT}" "$4" "$5"
   if [ "${CURL_CODE}" == "200" ]; then
     env_sync
   fi
   ;;
 
 "delete")
-  api_curl GET /environments/$3
+  api_curl GET "/environments/$3"
   if [ "${CURL_CODE}" == "200" ]; then
-    confirm_delete DELETE /environments/$3
+    confirm_delete DELETE "/environments/$3"
   fi
   ;;
 

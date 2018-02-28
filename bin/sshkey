@@ -2,11 +2,11 @@
 
 case "${ARGUMENT}" in
 "id")
-  api_curl GET /sshkey/$3
+  api_curl GET "/sshkey/$3"
   ;;
 
 "get")
-  api_curl GET /sshkey/$3/byname
+  api_curl GET "/sshkey/$3/byname"
   ;;
 
 "list")
@@ -18,22 +18,22 @@ case "${ARGUMENT}" in
   KEYFILE="$4"
   URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}/sshkey"
 
-  if [ ! -f ${KEYFILE} ]; then
+  if [ ! -f "${KEYFILE}" ]; then
     echo "ERROR! Key file ${KEYFILE} not found."
     exit 1
   fi
-  grep 'PRIVATE KEY' ${KEYFILE} > /dev/null
-  if [ $? -eq 0 ]; then
+  if grep 'PRIVATE KEY' "${KEYFILE}" > /dev/null
+  then
     echo "ERROR! Refusing to send what looks like a private key!"
     exit 1
   fi
-  api_curl POST /sshkey name=${NAME} sshkey@${KEYFILE}
+  api_curl POST /sshkey "name=${NAME}" "sshkey@${KEYFILE}"
   ;;
 
 "delete")
-  api_curl GET /sshkey/$3
+  api_curl GET "/sshkey/$3"
   if [ "${CURL_CODE}" == "200" ]; then
-    confirm_delete DELETE /sshkey/$3
+    confirm_delete DELETE "/sshkey/$3"
   fi
   ;;
 

@@ -2,11 +2,11 @@
 
 case "${ARGUMENT}" in
 "id")
-  api_curl GET /project/$3
+  api_curl GET "/project/$3"
   ;;
 
 "get")
-  api_curl GET /project/name/$3
+  api_curl GET "/project/name/$3"
   ;;
 
 "list")
@@ -14,18 +14,18 @@ case "${ARGUMENT}" in
   ;;
 
 "create")
-  api_curl POST /project name=$3 organization_name=$4
+  api_curl POST /project "name=$3" "organization_name=$4"
   if [ "${CURL_CODE}" == "200" ]; then
-    PROJECTID=`echo "${CURL_RESPONSE}" | jq -r '.["id"]'`
+    PROJECTID=$(echo "${CURL_RESPONSE}" | jq -r '.["id"]')
     echo "Hint! You might also want to run: boat init ${PROJECTID}"
     echo "      https://docs.longboat.io/getting-started.html#step-3-initialize-project"
   fi
   ;;
 
 "delete")
-  api_curl GET /project/$3
+  api_curl GET "/project/$3"
   if [ "${CURL_CODE}" == "200" ]; then
-    confirm_delete DELETE /project/$3
+    confirm_delete DELETE "/project/$3"
   fi
   ;;
 

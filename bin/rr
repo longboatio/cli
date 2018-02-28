@@ -2,25 +2,25 @@
 
 case "${ARGUMENT}" in
 "id")
-  api_curl GET /dnsrr/$3
+  api_curl GET "/dnsrr/$3"
   ;;
 
 "get")
-  api_curl GET /dnsrr/name/$3 domain_name=$4
+  api_curl GET "/dnsrr/name/$3" "domain_name=$4"
   ;;
 
 "list")
-  api_curl GET /dnsrr domain_name=$3
+  api_curl GET /dnsrr "domain_name=$3"
   ;;
 
 "create")
-  api_curl POST /dnsrr name=$3 type=$4 data=$5 domain_name=$6 $7 $8
+  api_curl POST /dnsrr "name=$3" "type=$4" "data=$5" "domain_name=$6" "$7" "$8"
   ;;
 
 "delete")
-  api_curl GET /dnsrr/$3
+  api_curl GET "/dnsrr/$3"
   if [ "${CURL_CODE}" == "200" ]; then
-    confirm_delete DELETE /dnsrr/$3
+    confirm_delete DELETE "/dnsrr/$3"
   fi
   ;;
 
