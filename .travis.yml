@@ -1,10 +1,10 @@
-dist: xenial
 language: bash
+dist: trusty
 sudo: required
 
 before_install:
   - sudo apt-get -qq update
-  - sudo apt-get install shellcheck
+  - sudo apt-get -y install shellcheck
 
 script:
   - shellcheck --version
