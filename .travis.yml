@@ -1,0 +1,6 @@
+language: bash
+dist: xenial
+
+script:
+  - shellcheck boat
+
