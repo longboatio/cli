@@ -2,11 +2,11 @@
 
 case "${ARGUMENT}" in
 "id")
-  api_curl GET /organization/$3
+  api_curl GET "/organization/$3"
   ;;
 
 "get")
-  api_curl GET /organization/$3/byname
+  api_curl GET "/organization/$3/byname"
   ;;
 
 "list")
@@ -14,14 +14,13 @@ case "${ARGUMENT}" in
   ;;
 
 "create")  
-  # FIXME: Optional uid/login during create ?
-  api_curl POST /organization name=$3
+  api_curl POST /organization "name=$3"
   ;;
 
 "delete")
-  api_curl GET /organization/$3
+  api_curl GET "/organization/$3"
   if [ "${CURL_CODE}" == "200" ]; then
-    confirm_delete DELETE /organization/$3
+    confirm_delete DELETE "/organization/$3"
   fi
   ;;
 
