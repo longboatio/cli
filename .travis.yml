@@ -2,9 +2,8 @@ language: bash
 os: osx
 osx_image: xcode9.3beta
 
-#before_install:
-#  - sudo apt-get -qq update
-#  - sudo apt-get -y install shellcheck
+before_install:
+  - brew install shellcheck
 
 script:
   - shellcheck --version
