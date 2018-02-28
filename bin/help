@@ -2,20 +2,21 @@
 
 case "$#" in
 "1")
-  cat ${BOATDIR}/help/boat
+  cat "${BOATDIR}/help/boat"
   ;;
 "2")
-  if [ -d ${BOATDIR}/help/$1 ]; then
-    source ${BOATDIR}/help/$1/all
-  elif [ -f ${BOATDIR}/help/$1 ]; then
-    cat ${BOATDIR}/help/$1
+  if [ -d "${BOATDIR}/help/$1" ]; then
+    # shellcheck disable=SC1090
+    source "${BOATDIR}/help/$1/all"
+  elif [ -f "${BOATDIR}/help/$1" ]; then
+    cat "${BOATDIR}/help/$1"
   else
     echo "Sorry, help section not found for: $1"
   fi
   ;;
 "3")
-  if [ -f ${BOATDIR}/help/$1/$2 ]; then
-    cat ${BOATDIR}/help/$1/$2
+  if [ -f "${BOATDIR}/help/$1/$2" ]; then
+    cat "${BOATDIR}/help/$1/$2"
   else
     echo "Sorry, help section not found for: $1 $2"
   fi
