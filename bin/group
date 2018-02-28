@@ -2,40 +2,40 @@
 
 case "${ARGUMENT}" in
 "id")
-  api_curl GET /group/$3
+  api_curl GET "/group/$3"
   ;;
 
 "get")
-  api_curl GET /group/name/$3 project_id=${LONGBOAT_PROJECT}
+  api_curl GET "/group/name/$3" "project_id=${LONGBOAT_PROJECT}"
   ;;
 
 "list")
-  if [ -z ${LONGBOAT_PROJECT} ]; then
+  if [ -z "${LONGBOAT_PROJECT}" ]; then
     api_curl GET /group
   else
-    api_curl GET /group project_id=${LONGBOAT_PROJECT}
+    api_curl GET /group "project_id=${LONGBOAT_PROJECT}"
   fi
   ;;
 
 "create")
-  api_curl POST /group name=$3 project_id=${LONGBOAT_PROJECT}
+  api_curl POST /group "name=$3" "project_id=${LONGBOAT_PROJECT}"
   ;;
 
 "delete")
-  api_curl GET /group/$3
+  api_curl GET "/group/$3"
   if [ "${CURL_CODE}" == "200" ]; then
-    confirm_delete DELETE /group/$3
+    confirm_delete DELETE "/group/$3"
   fi
   ;;
 
 "add")
   # FIXME: This should be done be group and host name - not id's
-  api_curl POST /group/$3/host host_id=$4
+  api_curl POST "/group/$3/host" "host_id=$4"
   ;;
 
 "remove")
   # FIXME: This should be done be group and host name - not id's
-  api_curl DELETE /group/$3/host host_id=$4
+  api_curl DELETE "/group/$3/host" "host_id=$4"
   ;;
 
 *)
