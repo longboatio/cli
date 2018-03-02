@@ -1,14 +1,13 @@
 # This is the default example Longboat site.yml playbook.
-# Most reason version is available here:
+# Most recent version is available here:
 # https://github.com/longboatio/longboat/blob/master/files/site.yml
 #
 # You should use this to set which hosts and groups that will get
 # which roles applied. See the official Ansible docs for more information:
 # http://docs.ansible.com/ansible/latest/playbooks_best_practices.html
-#
 ---
 - hosts: all
   roles:
-    - longboat/hostname
-    - longboat/users
+    - longboat/hostname/v1
+    - longboat/users/v1
 
