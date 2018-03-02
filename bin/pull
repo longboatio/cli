@@ -110,7 +110,7 @@ fi
 if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
   find roles -maxdepth 1 -not -path "roles" | while read -r ROLE ; do
     if [ -f "${ROLE}/.git/config" ]; then
-      echo "==> Updating roles/${ROLE}"
+      echo "==> Updating ${ROLE}"
       cd "./${ROLE}" || exit
       git pull --quiet
       cd ../../ || exit
