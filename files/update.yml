@@ -1,23 +1,24 @@
 # This is the default example Longboat update.yml playbook.
-# Most reason version is available here:
+# Most recent version is available here:
 # https://github.com/longboatio/longboat/blob/master/files/update.yml
 #
 # This is provided as an example on how to update one or more hosts using
-# the Longboat roles: pkgs-apt/update and pkgs-apt/upgrade
+# the Longboat roles: apt-update and apt-upgrade
 #
-# Update repository on all hosts: (ie. apt-get update)
+# Update apt repository on all hosts (ie. apt-get update):
 # $ ansible-playbook update.yml --tags=update
 #
-# Upgrade packages on hosts in group webservers:
+# Upgrade packages on hosts in group webservers (ie. apt-get upgrade):
 # $ ansible-playbook update.yml --tags=upgrade --limit=webservers
 #
 ---
 - hosts: all
   roles:
-    - longboat/pkgs-apt/update
+    - longboat/apt-update/v1
   tags: update
 
 - hosts: all
   roles:
-    - longboat/pkgs-apt/upgrade
+    - longboat/apt-upgrade/v1
   tags: upgrade
+
