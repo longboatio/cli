@@ -25,6 +25,10 @@ ok() {
   echo -e "   [${GREEN}OK${NC}] $1"
 }
 
+ask() {
+  echo -en "    [${PURPLE}?${NC}] $1 "
+}
+
 space() {
   echo -e "        $1"
 }
@@ -38,27 +42,27 @@ function api_curl() {
   local METHOD="$1"
   local URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2"
   local CURL_HEADER="${USERCONFIGDIR}/curl_header"
+  CURL_TMP="/tmp/longboat.curl.$$"
 
-  # Create header file for CURL requests and keep it secret
-  touch "${CURL_HEADER}"
-  chmod 600 "${CURL_HEADER}"
+  # Prepare Files
+  touch "${CURL_HEADER}" "${CURL_TMP}"
+  chmod 600 "${CURL_HEADER}" "${CURL_TMP}"
   echo "Authorization: Bearer ${LONGBOAT_TOKEN}" > "${CURL_HEADER}"
 
   # Create arguments for CURL request
   if [ $# -gt 2 ]; then
     for ARG in "${@:3}"; do
-      ARGS="${ARGS} --data-urlencode ${ARG}"
+      if [ ! -z "${ARG}" ]; then
+        ARGS="${ARGS} --data-urlencode ${ARG}"
+      fi
     done
   fi
 
-  CURL_TMP="/tmp/longboat.curl.$$"
-  touch ${CURL_TMP}
-  chmod 600 ${CURL_TMP}
   # shellcheck disable=SC2086
   CURL_CODE=$(curl -s -w "%{http_code}" -o "${CURL_TMP}" --header "@${CURL_HEADER}" ${ARGS} -X "${METHOD}" "${URL}")
   CURL_EXIT="$?"
-  CURL_RESPONSE=$(cat ${CURL_TMP})
-  rm ${CURL_TMP}
+  CURL_RESPONSE=$(cat "${CURL_TMP}")
+  rm "${CURL_TMP}"
 
   if [ ${CURL_EXIT} -gt 0 ]; then
     echo "ERROR! API request failed - curl error code ${CURL_EXIT}"
