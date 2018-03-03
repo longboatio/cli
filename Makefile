@@ -1,0 +1,3 @@
+test:
+	shellcheck -ax boat
+
