@@ -1,6 +1,15 @@
-#!/usr/bin/env bash
+group commands is for group management.
 
-for SECTION in id get list create delete add remove; do
-  cat ${BOATDIR}/help/group/${SECTION}
-done
+Usage:
+  boat group <command>
 
+Commands:
+  id          Get group by id.
+  get         Get group by name.
+  list        List groups.
+  create      Create new group.
+  delete      Delete group by id.
+  add         Add host to a group.
+  remove      Remove host from group.
+
+Use "boat group <command> -h" for more information about a command.

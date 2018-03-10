@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
+org commands is for organization management.
 
-for SECTION in id get list create delete; do
-  cat ${BOATDIR}/help/org/${SECTION}
-done
+Usage:
+  boat org <command>
 
+Commands:
+  id          Get orgnization by id.
+  get         Get orgnization by name.
+  list        List orgnizations.
+  create      Create new orgnization.
+  delete      Delete orgnization by id.
+
+Use "boat orgnization <command> -h" for more information about a command.

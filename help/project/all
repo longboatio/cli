@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
+project commands is for project management.
 
-for SECTION in id get list create delete; do
-  cat ${BOATDIR}/help/project/${SECTION}
-done
+Usage:
+  boat project <command>
 
+Commands:
+  id          Get project by id.
+  get         Get project by name.
+  list        List project.
+  create      Create new project.
+  delete      Delete project by id.
+
+Use "boat project <command> -h" for more information about a command.

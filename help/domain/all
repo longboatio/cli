@@ -1,6 +1,15 @@
-#!/usr/bin/env bash
+Domain commands is for domain management.
+Also see "boat rr -h" for ressource records management.
 
-for SECTION in id get list create axfr delete; do
-  cat ${BOATDIR}/help/domain/${SECTION}
-done
+Usage:
+  boat domain <command>
 
+Commands:
+  id          Get domain details by domain id.
+  get         Get domain details by domain name.
+  list        List domains.
+  create      Create a new domain.
+  axfr        Show AXFR for a domain.
+  delete      Delete a domain by domain id.
+
+Use "boat domain <command> -h" for more information about a command.

@@ -1,31 +1,33 @@
-Usage: boat <command> [<args>]
+boat is the command line interface for Longboat: https://www.longboat.io
 
-  init        Intialize a new project directory.
-  pull        Get the latest updates from the project.
-  upgrade     Pull latest version of CLI tools
-  doctor      Check Longboat installation and project
+Usage:
+  boat <command> [<args>]
+
+Commands:
+  pull        Pull latest updates for local files and projects.
+  upgrade     Pull latest version of CLI tools.
+  doctor      Check Longboat installation and project.
 
 User commands:
-
   auth        Setup Longboat token for API access.
   sshkey      Manage your SSH keys.
 
-Organization commands:
+Project commands:
+  init        Intialize a new project directory.
+  env         Manage environments.
+  host        Manage hosts.
+  group       Manage host groups.
+  droplet     Create droplets with Digitalocean.
 
+Organization commands:
   org         Manage your organizations.
   project     Manage projects.
   domain      Manage domains.
   rr          Manage dns records for domains.
 
-Project commands:
-
-  env         Manage environments.
-  host        Manage hosts.
-  group       Manage host groups.
-
 Ansible commands:
-
   inventory   Get inventory from API. Used by ansible.
 
-Online documentation: http://docs.longboat.io
+Use "boat <command> -h" for more information about the command.
 
+Online documentation: http://docs.longboat.io

@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
+sshkey commands is for SSH key management.
 
-for SECTION in id get list add delete; do
-  cat ${BOATDIR}/help/sshkey/${SECTION}
-done
+Usage:
+  boat sshkey <command>
 
+Commands:
+  id          Get SSH key by id.
+  get         Get SSH key by name.
+  list        List SSH keys.
+  add         Importing new sshkey from file.
+  delete      Delete SSH key by id.
+
+Use "boat sshkey <command> -h" for more information about a command.
