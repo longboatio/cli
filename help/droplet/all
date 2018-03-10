@@ -1,0 +1,9 @@
+Droplet commands are for bootstrapping Digitalocean droplets in Longboat.
+
+Usage:
+  boat droplet <command>
+
+Commands:
+  create      Creating new Droplets.
+
+Use "boat droplet <command> -h" for more information about a command.
