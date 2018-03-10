@@ -74,6 +74,9 @@ case "${COMMAND}" in
 "host")
   # shellcheck source=bin/host
   source "${BOATDIR}/bin/host" ; exit $? ;;
+"droplet")
+  # shellcheck source=bin/droplet
+  source "${BOATDIR}/bin/droplet" ; exit $? ;;
 "group")
   # shellcheck source=bin/group
   source "${BOATDIR}/bin/group" ; exit $? ;;
@@ -86,9 +89,8 @@ case "${COMMAND}" in
   echo "==> ...done! We highly recommend running: boat doctor"
   ;;
 *)
-  echo "ERROR! Unknown command. Try: boat -h"
-  echo "or the online documentation: ${LONGBOAT_DOCS}"
-  exit 1
+  # shellcheck source=bin/help
+  source "${BOATDIR}/bin/help"
+  exit 0
   ;;
 esac
-

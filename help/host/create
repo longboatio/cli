@@ -1,5 +1,5 @@
-boat host create <hostname> <environment> [ipv4=<ip>] [ipv6=<ip>]"
+boat host create <hostname> <environment> [ipv4=<ip>] [ipv6=<ip>]
 
     Create a new host.
-    Example: boat host create webserver2 stage ipv4=1.2.3.4"
+    Example: boat host create webserver2 stage ipv4=1.2.3.4
 

@@ -1,13 +1,15 @@
 #!/usr/bin/env bash
 
 case "$#" in
+"0")
+  cat "${BOATDIR}/help/boat"
+  ;;
 "1")
   cat "${BOATDIR}/help/boat"
   ;;
 "2")
-  if [ -d "${BOATDIR}/help/$1" ]; then
-    # shellcheck disable=SC1090
-    source "${BOATDIR}/help/$1/all"
+  if [ -f "${BOATDIR}/help/$1/all" ]; then
+    cat "${BOATDIR}/help/$1/all"
   elif [ -f "${BOATDIR}/help/$1" ]; then
     cat "${BOATDIR}/help/$1"
   else
@@ -25,4 +27,3 @@ case "$#" in
   echo "Sorry, help section not found."
   ;;
 esac
-

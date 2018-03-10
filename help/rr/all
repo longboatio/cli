@@ -1,6 +1,14 @@
-#!/usr/bin/env bash
+RR commands is for resource record management.
+Also see "boat domain -h" for domain management.
 
-for SECTION in id get list create delete; do
-  cat ${BOATDIR}/help/rr/${SECTION}
-done
+Usage:
+  boat rr <command>
 
+Commands:
+  id          Get resource record by rr id.
+  get         Get resource record by rr name.
+  list        List resource records for a domain.
+  create      Create new resource record.
+  delete      Delete resource record by id.
+
+Use "boat rr <command> -h" for more information about a command.

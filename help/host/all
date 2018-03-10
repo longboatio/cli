@@ -1,6 +1,14 @@
-#!/usr/bin/env bash
+host commands is for host management.
 
-for SECTION in id get list create keys delete; do
-  cat ${BOATDIR}/help/host/${SECTION}
-done
+Usage:
+  boat host <command>
 
+Commands:
+  id          Get host by id.
+  get         Get host by name.
+  list        List hosts.
+  create      Create new host.
+  delete      Delete host by id.
+  keys        Adding host keys to a host.
+
+Use "boat host <command> -h" for more information about a command.

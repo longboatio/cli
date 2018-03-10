@@ -1,6 +1,13 @@
-#!/usr/bin/env bash
+env commands is for environment management.
 
-for SECTION in id get list create delete; do
-  cat ${BOATDIR}/help/env/${SECTION}
-done
+Usage:
+  boat env <command>
 
+Commands:
+  id          Get environment by id.
+  get         Get environment by name.
+  list        List environments.
+  create      Create new environment.
+  delete      Delete environment by id.
+
+Use "boat env <command> -h" for more information about a command.
