@@ -9,7 +9,49 @@ then
 fi
 
 case "${ARGUMENT}" in
+"get")
+  # FIXME: Really need a better way of making API calls :/
+  HOST=$(api_curl GET "/hosts/name/$3" "project_id=${LONGBOAT_PROJECT}" "environment_name=$4")
+  PROVIDER_NAME=$(echo "${HOST}" | jq --raw-output .provider_name)
+  PROVIDER_ID=$(echo "${HOST}" | jq --raw-output .provider_id)
+  if [ "${PROVIDER_NAME}" == "digitalocean" ]; then
+    doctl compute droplet get "${PROVIDER_ID}" --output=json | jq .[0]
+  else
+    error "Host is not a Digitalocean droplet"
+  fi
+  ;;
+
 "create")
+  # Check for droplet region
+  if [ -z "${DO_DROPLET_REGION}" ]; then
+    error "Please set droplet region in ${BLUE}longboat.cfg${NC} - ie.:"
+    space "DO_DROPLET_REGION=\"nyc1\""
+    info "Querying Digitalocean for regions..."
+    echo
+    doctl compute region list
+    exit 1
+  fi
+
+  # Check for droplet size
+  if [ -z "${DO_DROPLET_SIZE}" ]; then
+    error "Please set droplet size in ${BLUE}longboat.cfg${NC} - ie.:"
+    space "DO_DROPLET_SIZE=\"s-1vcpu-1gb\""
+    info "Querying Digitalocean for sizes..."
+    echo
+    doctl compute size list
+    exit 1
+  fi
+
+  # Check for droplet image
+  if [ -z "${DO_DROPLET_IMAGE}" ]; then
+    error "Please set droplet image in ${BLUE}longboat.cfg${NC} - ie.:"
+    space "DO_DROPLET_IMAGE=\"ubuntu-16-04-x64\""
+    info "Querying Digitalocean for sizes..."
+    echo
+    doctl compute image list-distribution --public
+    exit 1
+  fi
+
   if ! DO_KEYS=$(doctl compute ssh-key list --output=json | jq .[].id | paste -sd "," -)
   then
     error "Could not get ssh keys from Digitalocean."
