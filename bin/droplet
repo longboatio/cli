@@ -85,6 +85,7 @@ case "${ARGUMENT}" in
   fi
   ok "Longboat host ${BLUE}${HOST_NAME}${NC} created"
 
+  info "Bootstrapping ${BLUE}${DO_DROPLET_SIZE}${NC} with ${BLUE}${DO_DROPLET_IMAGE}${NC} in ${BLUE}${DO_DROPLET_REGION}${NC}"
   if DROPLET_ID=$(doctl compute droplet create "${HOST_NAME}" \
     --no-header \
     --format "ID" \
@@ -176,8 +177,7 @@ case "${ARGUMENT}" in
   ;;
 
 *)
-  error "Unknown droplet command!"
-  space "Try: boat droplet -h"
+  error "Unknown droplet command! Try: boat droplet -h"
   exit 1
   ;;
 esac
