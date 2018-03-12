@@ -21,6 +21,10 @@ case "${ARGUMENT}" in
   fi
   ;;
 
+"list")
+  doctl compute droplet list --format Status,ID,Name,Memory,VCPUs,Disk,Region,Image | cut -c"1-$(tput cols)"
+  ;;
+
 "create")
   # Check for droplet region
   if [ -z "${DO_DROPLET_REGION}" ]; then
