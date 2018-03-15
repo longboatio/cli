@@ -66,7 +66,7 @@ case "${ARGUMENT}" in
     space "Please add ssh-keys to Digitalocean: doctl compute ssh-key import"
     exit 1
   fi
-  ok "Retrieved ssh-keys from Digitalocean for bootstrap: ${BLUE}${DO_KEYS}${NC}"
+  ok "Retrieved ssh-keys from Digitalocean: ${BLUE}${DO_KEYS}${NC}"
 
   HOST_SHORT="$3"
   HOST_ENV="$4"
@@ -144,7 +144,7 @@ case "${ARGUMENT}" in
   fi
   TMPFILE="/tmp/longboat.hostkeys.$$"
   echo "${KEYS}" > "${TMPFILE}"
-  api_curl POST "/hosts/${HOST_ID}/keys" "hostkeys@${TMPFILE}"
+  api_curl_v2 POST "/hosts/${HOST_ID}/keys" "hostkeys@${TMPFILE}"
   rm "${TMPFILE}"
   if [ "${CURL_CODE}" == "200" ]; then
     ok "Host keys added for ${BLUE}${HOST_NAME}${NC}"
@@ -155,19 +155,22 @@ case "${ARGUMENT}" in
     exit 1
   fi
 
-  #FIXME: Plain SSH to droplet and make sure python is installed
+  # FIXME: Plain SSH to droplet and make sure python is installed
+  # FIXME: Only tested with Ubuntu 16.04 (hence python interpreter issue)
+  # FIXME: Setting a different python interpreter might be a tricky solution - it should either be permanent or easy changeable :/
 
-  #FIXME: Setting a different python interpreter might be a tricky solution - it should either be permanent or easy changeable :/
+  info "Running ${BLUE}ansible-playbook ${LONGBOAT_BOOTSTRAP_PLAYBOOK}${NC} on ${BLUE}${HOST_NAME}${NC}"
 
-  info "Running ${BLUE}ansible-playbook ${LONGBOAT_BOOTSTRAP_PLAYBOOK}${NC} on ${BLUE}${HOST_NAME}${NC}:"
-
-  ansible-playbook "${LONGBOAT_BOOTSTRAP_PLAYBOOK}" \
+  if ! PLAYBOOK=$(ANSIBLE_BECOME=false ANSIBLE_BECOME_ASK_PASS=false ansible-playbook "${LONGBOAT_BOOTSTRAP_PLAYBOOK}" \
     --inventory="${HOST_ENV}" \
     --limit="${HOST_SHORT}.${HOST_ENV}" \
     --extra-vars="ansible_host=${DROPLET_IPV4}" \
     --extra-vars="ansible_user=root" \
-    --extra-vars="ansible_python_interpreter=/usr/bin/python3" \
-    --extra-vars="become=false"
+    --extra-vars="ansible_python_interpreter=/usr/bin/python3") ; then
+    echo "${PLAYBOOK}" > ./bootstrap-playbook.log
+    error "ansible-playbook run failed - output saved to: ${BLUE}./bootstrap-playbook.log${NC}"
+    exit 1
+  fi
 
   #FIXME: Request Longboat: update host set status :managed
 
