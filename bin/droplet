@@ -1,0 +1,194 @@
+#!/usr/bin/env bash
+
+if ! command -v doctl  > /dev/null
+then
+  error "doctl not found!"
+  space "Digitalocean command line tool not installed."
+  space "https://github.com/digitalocean/doctl/blob/master/README.md"
+  exit 1
+fi
+
+case "${ARGUMENT}" in
+"get")
+  api_curl_v2 GET "/hosts/name/$3" "project_id=${LONGBOAT_PROJECT}" "environment_name=$4" || exit 1
+  PROVIDER_NAME=$(echo "${CURL_RESPONSE}" | jq --raw-output .provider_name)
+  PROVIDER_ID=$(echo "${CURL_RESPONSE}" | jq --raw-output .provider_id)
+  if [ "${PROVIDER_NAME}" == "digitalocean" ]; then
+    doctl compute droplet get "${PROVIDER_ID}" --output=json | jq .[0]
+  else
+    error "Host is not a Digitalocean droplet"
+  fi
+  ;;
+
+"list")
+  if ! DROPLETS=$(doctl compute droplet list --format ID,Status,Name,Memory,VCPUs,Disk,Region,Image) ;  then
+    error "${DROPLETS}"
+    exit 1
+  fi
+
+  api_curl_v2 GET /hosts "project_id=${LONGBOAT_PROJECT}" || exit 1
+  echo "${DROPLETS}" | head -1 | cut -c"1-$(tput cols)"
+  echo "${CURL_RESPONSE}" | jq --raw-output .[].provider_id | while read -r ID ; do
+    if [ "${ID}" != "null" ]; then
+      echo "${DROPLETS}" | grep "${ID}" | cut -c"1-$(tput cols)"
+    fi
+  done
+  ;;
+
+"create")
+  # Check for droplet region
+  if [ -z "${DO_DROPLET_REGION}" ] ; then
+    error "Please set droplet region in ${BLUE}longboat.cfg${NC} - ie.:"
+    space "DO_DROPLET_REGION=\"nyc1\""
+    info "Querying Digitalocean for regions..."
+    echo
+    doctl compute region list
+    exit 1
+  fi
+
+  # Check for droplet size
+  if [ -z "${DO_DROPLET_SIZE}" ] ; then
+    error "Please set droplet size in ${BLUE}longboat.cfg${NC} - ie.:"
+    space "DO_DROPLET_SIZE=\"s-1vcpu-1gb\""
+    info "Querying Digitalocean for sizes..."
+    echo
+    doctl compute size list
+    exit 1
+  fi
+
+  # Check for droplet image
+  if [ -z "${DO_DROPLET_IMAGE}" ] ; then
+    error "Please set droplet image in ${BLUE}longboat.cfg${NC} - ie.:"
+    space "DO_DROPLET_IMAGE=\"ubuntu-16-04-x64\""
+    info "Querying Digitalocean for sizes..."
+    echo
+    doctl compute image list-distribution --public
+    exit 1
+  fi
+
+  if ! DO_KEYS=$(doctl compute ssh-key list --output=json | jq .[].id | paste -sd "," -) ; then
+    error "Could not get ssh keys from Digitalocean."
+    exit 1
+  fi
+
+  if [ -z "${DO_KEYS}" ] ; then
+    error "No ssh-keys returned from Digitalocean."
+    space "Please add ssh-keys to Digitalocean: doctl compute ssh-key import"
+    exit 1
+  fi
+  ok "Retrieved ssh-keys from Digitalocean: ${BLUE}${DO_KEYS}${NC}"
+
+  HOST_SHORT="$3"
+  HOST_ENV="$4"
+  api_curl_v2 POST /hosts "name=${HOST_SHORT}" "environment_name=${HOST_ENV}" "project_id=${LONGBOAT_PROJECT}" || exit 1
+  HOST_ID=$(echo "${CURL_RESPONSE}" | jq -r '.id')
+  HOST_NAME=$(echo "${CURL_RESPONSE}" | jq -r '.fqdn')
+  if [ "${HOST_NAME}" == "null" ]; then
+    HOST_NAME=$(echo "${CURL_RESPONSE}" | jq -r '.name')
+    if [ "${HOST_NAME}" == "null" ]; then
+      error "Can't create droplet, no host name!"
+      exit 1
+    fi
+  fi
+  ok "Longboat host ${BLUE}${HOST_NAME}${NC} created"
+
+  info "Bootstrapping ${BLUE}${DO_DROPLET_SIZE}${NC} with ${BLUE}${DO_DROPLET_IMAGE}${NC} in ${BLUE}${DO_DROPLET_REGION}${NC}"
+  if DROPLET_ID=$(doctl compute droplet create "${HOST_NAME}" \
+    --no-header \
+    --format "ID" \
+    --size "${DO_DROPLET_SIZE}" \
+    --image "${DO_DROPLET_IMAGE}" \
+    --region "${DO_DROPLET_REGION}" \
+    --ssh-keys "${DO_KEYS}" \
+    --enable-ipv6)
+  then
+    ok "Droplet created ID ${BLUE}${DROPLET_ID}${NC}"
+  else
+    error "Could not create droplet!"
+    exit 1
+  fi
+
+  sleep 3
+
+  if DROPLET_IPV4=$(doctl compute droplet get "${DROPLET_ID}" --format PublicIPv4 --no-header)
+  then
+    ok "Host public IPv4: ${BLUE}${DROPLET_IPV4}${NC}"
+  else
+    error "Could not get IPv4 address for host!"
+    exit 1
+  fi
+  if DROPLET_IPV6=$(doctl compute droplet get "${DROPLET_ID}" --format PublicIPv6 --no-header)
+  then
+    ok "Host public IPv6: ${BLUE}${DROPLET_IPV6}${NC}"
+  else
+    error "Could not get IPv6 address for host!"
+    exit 1
+  fi
+
+  # Update Longboat host (set ip and provider)
+  api_curl_v2 PUT "/hosts/${HOST_ID}" "ipv4=${DROPLET_IPV4}" "ipv6=${DROPLET_IPV6}" "provider_name=digitalocean" "provider_id=${DROPLET_ID}" || exit 1
+  ok "Longboat host updated"
+
+  # Get host keys 
+  info "Waiting 1 min for Droplet to come online..."
+  sleep 55
+  KEYS=$(ssh-keyscan -T 5 "${DROPLET_IPV4}" 2> /dev/null)
+  if [ -z "${KEYS}" ]; then
+    info "Waiting extra 30 sec for Droplet to come online..."
+    sleep 25
+    KEYS=$(ssh-keyscan -T 5 "${DROPLET_IPV4}" 2> /dev/null)
+    if [ -z "${KEYS}" ]; then
+      info "Waiting extra 30 sec for Droplet to come online..."
+      sleep 25
+      KEYS=$(ssh-keyscan -T 5 "${DROPLET_IPV4}" 2> /dev/null)
+      if [ -z "${KEYS}" ]; then
+        info "Waiting final 30 sec for Droplet to come online..."
+        sleep 25
+        KEYS=$(ssh-keyscan -T 5 "${DROPLET_IPV4}" 2> /dev/null)
+        if [ -z "${KEYS}" ]; then
+          error "Droplet did not come online, unable to proceed."
+          exit 1
+        fi
+      fi
+    fi
+  fi
+  TMPFILE="/tmp/longboat.hostkeys.$$"
+  echo "${KEYS}" > "${TMPFILE}"
+  api_curl_v2 POST "/hosts/${HOST_ID}/keys" "hostkeys@${TMPFILE}"
+  rm "${TMPFILE}"
+  if [ "${CURL_CODE}" == "200" ]; then
+    ok "Host keys added for ${BLUE}${HOST_NAME}${NC}"
+    user_hosts_update
+  else
+    error "Could not set host keys - API response was:"
+    echo_json "${CURL_RESPONSE}"
+    exit 1
+  fi
+
+  if [ ! -z "${LONGBOAT_BOOTSTRAP_COMMAND}" ] ; then
+    info "Running custom bootstrap command on ${BLUE}${HOST_NAME}${NC}"
+    # shellcheck disable=SC2029
+    if ! OUTPUT=$(ssh "root@${DROPLET_IPV4}" "${LONGBOAT_BOOTSTRAP_COMMAND}" 2>&1) ; then
+      echo "${OUTPUT}" > ./bootstrap-command-error.log
+      error "Custom command failed. Output saved to: ${BLUE}./bootstrap-command-error.log${NC}"
+    fi
+  fi
+
+  info "Running ${BLUE}ansible-playbook ${LONGBOAT_BOOTSTRAP_PLAYBOOK}${NC} on ${BLUE}${HOST_NAME}${NC}"
+
+  if ! PLAYBOOK=$(ANSIBLE_BECOME=false ANSIBLE_BECOME_ASK_PASS=false ansible-playbook "${LONGBOAT_BOOTSTRAP_PLAYBOOK}" \
+    --inventory="${HOST_ENV}" \
+    --limit="${HOST_SHORT}.${HOST_ENV}" \
+    --extra-vars="ansible_host=${DROPLET_IPV4}" \
+    --extra-vars="ansible_user=root") ; then
+    echo "${PLAYBOOK}" > ./bootstrap-playbook-error.log
+    error "ansible-playbook run failed - output saved to: ${BLUE}./bootstrap-playbook-error.log${NC}"
+    exit 1
+  fi
+  ;;
+
+*)
+  error "Unknown droplet command! Try: boat droplet -h"
+  exit 1
+  ;;
+esac

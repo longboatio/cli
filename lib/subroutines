@@ -42,7 +42,7 @@ function api_curl() {
   local METHOD="$1"
   local URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2"
   local CURL_HEADER="${USERCONFIGDIR}/curl_header"
-  CURL_TMP="/tmp/longboat.curl.$$"
+  local CURL_TMP="/tmp/longboat.curl.$$"
 
   # Prepare Files
   touch "${CURL_HEADER}" "${CURL_TMP}"
@@ -79,6 +79,57 @@ function api_curl() {
       exit 1
     fi
   fi
+}
+
+function api_curl_v2() {
+  local ARGS=""
+  local METHOD="$1"
+  local URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2"
+  local CURL_HEADER="${USERCONFIGDIR}/curl_header"
+  local CURL_TMP="/tmp/longboat.curl.$$"
+
+  # Prepare Files
+  touch "${CURL_HEADER}" "${CURL_TMP}"
+  chmod 600 "${CURL_HEADER}" "${CURL_TMP}"
+  echo "Authorization: Bearer ${LONGBOAT_TOKEN}" > "${CURL_HEADER}"
+
+  # Create arguments for CURL request
+  if [ $# -gt 2 ]; then
+    for ARG in "${@:3}"; do
+      if [ ! -z "${ARG}" ]; then
+        ARGS="${ARGS} --data-urlencode ${ARG}"
+      fi
+    done
+  fi
+
+  # shellcheck disable=SC2086
+  CURL_CODE=$(curl -s -w "%{http_code}" -o "${CURL_TMP}" --header "@${CURL_HEADER}" ${ARGS} -X "${METHOD}" "${URL}")
+  CURL_EXIT="$?"
+  CURL_RESPONSE=$(cat "${CURL_TMP}")
+  rm "${CURL_TMP}"
+
+  # Check for curl exit code
+  if [ "${CURL_EXIT}" -gt 0 ]; then
+    if [ "${CURL_EXIT}" -eq 7 ]; then
+      error "Failed to connect to API: ${URL}"
+    else
+      error "API curl request failed (curl error code ${CURL_EXIT})"
+      space "For more information see https://curl.haxx.se/libcurl/c/libcurl-errors.html"
+    fi
+    return 255
+  fi
+
+  if [ "${CURL_CODE}" != "200" ]; then
+    echo "${CURL_RESPONSE}" | jq --raw-output .errors[] | while read -r ERROR ; do
+      error "${ERROR}"
+    done
+  fi
+
+  if [ "${CURL_CODE}" == "200" ]; then
+    return 0
+  fi
+
+  return 1
 }
 
 function confirm_continue() {

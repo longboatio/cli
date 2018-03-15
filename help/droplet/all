@@ -1,0 +1,15 @@
+Droplet commands is for bootstrapping Digitalocean droplets in Longboat.
+
+Usage:
+  boat droplet <command>
+
+Requirements:
+  The Digitalocean command line tool must be installed and authenticated:
+  https://github.com/digitalocean/doctl/blob/master/README.md
+
+Commands:
+  get         Get Droplet info.
+  list        List Digitalocean droplets.
+  create      Creating new Droplets.
+
+Use "boat droplet <command> -h" for more information about a command.
