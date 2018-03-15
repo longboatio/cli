@@ -1,0 +1,10 @@
+boat droplet get <hostname> <environment>
+
+    Get Digitalocean droplet information for a host.
+
+    The host must have provider name set to "digitalocean" and provider id
+    set to the Droplet ID.
+
+    $ boat droplet get webserver2 stage
+
+    FIXME: Show example output
