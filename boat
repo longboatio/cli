@@ -90,7 +90,7 @@ case "${COMMAND}" in
   ;;
 *)
   echo "ERROR! Unknown command. Try: boat -h"
-  echo "or the online documentation: ${LONGBOAT_DOCS}"
+  echo "or the online documentation: http://docs.longboat.io/en/latest/cli.html"
   exit 1
   ;;
 esac
