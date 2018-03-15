@@ -6,5 +6,3 @@ boat droplet get <hostname> <environment>
     set to the Droplet ID.
 
     $ boat droplet get webserver2 stage
-
-    FIXME: Show example output
