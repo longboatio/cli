@@ -1,0 +1,5 @@
+boat droplet list
+
+    List Digitalocean droplets for the Longboat project and their properties.
+
+    $ boat droplet list
