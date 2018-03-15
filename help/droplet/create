@@ -1,4 +1,5 @@
 boat droplet create <hostname> <environment>
 
     Create a new droplet with Digitalocean, add it to Longboat and provision it.
-    Example: boat droplet create webserver2 stage
+
+    $ boat droplet create webserver2 stage

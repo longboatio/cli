@@ -10,10 +10,9 @@ fi
 
 case "${ARGUMENT}" in
 "get")
-  # FIXME: Really need a better way of making API calls :/
-  HOST=$(api_curl GET "/hosts/name/$3" "project_id=${LONGBOAT_PROJECT}" "environment_name=$4")
-  PROVIDER_NAME=$(echo "${HOST}" | jq --raw-output .provider_name)
-  PROVIDER_ID=$(echo "${HOST}" | jq --raw-output .provider_id)
+  api_curl_v2 GET "/hosts/name/$3" "project_id=${LONGBOAT_PROJECT}" "environment_name=$4" || exit 1
+  PROVIDER_NAME=$(echo "${CURL_RESPONSE}" | jq --raw-output .provider_name)
+  PROVIDER_ID=$(echo "${CURL_RESPONSE}" | jq --raw-output .provider_id)
   if [ "${PROVIDER_NAME}" == "digitalocean" ]; then
     doctl compute droplet get "${PROVIDER_ID}" --output=json | jq .[0]
   else
@@ -22,12 +21,13 @@ case "${ARGUMENT}" in
   ;;
 
 "list")
+  # FIXME: List only hosts for this project
   doctl compute droplet list --format Status,ID,Name,Memory,VCPUs,Disk,Region,Image | cut -c"1-$(tput cols)"
   ;;
 
 "create")
   # Check for droplet region
-  if [ -z "${DO_DROPLET_REGION}" ]; then
+  if [ -z "${DO_DROPLET_REGION}" ] ; then
     error "Please set droplet region in ${BLUE}longboat.cfg${NC} - ie.:"
     space "DO_DROPLET_REGION=\"nyc1\""
     info "Querying Digitalocean for regions..."
@@ -37,7 +37,7 @@ case "${ARGUMENT}" in
   fi
 
   # Check for droplet size
-  if [ -z "${DO_DROPLET_SIZE}" ]; then
+  if [ -z "${DO_DROPLET_SIZE}" ] ; then
     error "Please set droplet size in ${BLUE}longboat.cfg${NC} - ie.:"
     space "DO_DROPLET_SIZE=\"s-1vcpu-1gb\""
     info "Querying Digitalocean for sizes..."
@@ -47,7 +47,7 @@ case "${ARGUMENT}" in
   fi
 
   # Check for droplet image
-  if [ -z "${DO_DROPLET_IMAGE}" ]; then
+  if [ -z "${DO_DROPLET_IMAGE}" ] ; then
     error "Please set droplet image in ${BLUE}longboat.cfg${NC} - ie.:"
     space "DO_DROPLET_IMAGE=\"ubuntu-16-04-x64\""
     info "Querying Digitalocean for sizes..."
@@ -56,28 +56,21 @@ case "${ARGUMENT}" in
     exit 1
   fi
 
-  if ! DO_KEYS=$(doctl compute ssh-key list --output=json | jq .[].id | paste -sd "," -)
-  then
+  if ! DO_KEYS=$(doctl compute ssh-key list --output=json | jq .[].id | paste -sd "," -) ; then
     error "Could not get ssh keys from Digitalocean."
     exit 1
   fi
 
-  if [ -z "${DO_KEYS}" ]
-  then
+  if [ -z "${DO_KEYS}" ] ; then
     error "No ssh-keys returned from Digitalocean."
     space "Please add ssh-keys to Digitalocean: doctl compute ssh-key import"
     exit 1
   fi
   ok "Retrieved ssh-keys from Digitalocean for bootstrap: ${BLUE}${DO_KEYS}${NC}"
 
-  CURL_SILENT="true"
-  # FIXME: Running only with CURL_SILENT is a bad idea, if host create fails
-  #        it doesn't show any errors - just stops! 
-  # FIXME: Create host status (bootstrap, managed etc.)
-  # Request Longboat: create host
   HOST_SHORT="$3"
   HOST_ENV="$4"
-  api_curl POST /hosts "name=${HOST_SHORT}" "environment_name=${HOST_ENV}" "project_id=${LONGBOAT_PROJECT}"
+  api_curl_v2 POST /hosts "name=${HOST_SHORT}" "environment_name=${HOST_ENV}" "project_id=${LONGBOAT_PROJECT}" || exit 1
   HOST_ID=$(echo "${CURL_RESPONSE}" | jq -r '.id')
   HOST_NAME=$(echo "${CURL_RESPONSE}" | jq -r '.fqdn')
   if [ "${HOST_NAME}" == "null" ]; then
@@ -123,7 +116,7 @@ case "${ARGUMENT}" in
   fi
 
   # Update Longboat host (set ip and provider)
-  api_curl PUT "/hosts/${HOST_ID}" "ipv4=${DROPLET_IPV4}" "ipv6=${DROPLET_IPV6}" "provider_name=digitalocean" "provider_id=${DROPLET_ID}"
+  api_curl_v2 PUT "/hosts/${HOST_ID}" "ipv4=${DROPLET_IPV4}" "ipv6=${DROPLET_IPV6}" "provider_name=digitalocean" "provider_id=${DROPLET_ID}" || exit 1
   ok "Longboat host updated"
 
   # Get host keys 
