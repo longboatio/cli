@@ -26,4 +26,3 @@ case "$#" in
   ;;
 esac
 
-echo ""
