@@ -21,8 +21,18 @@ case "${ARGUMENT}" in
   ;;
 
 "list")
-  # FIXME: List only hosts for this project
-  doctl compute droplet list --format Status,ID,Name,Memory,VCPUs,Disk,Region,Image | cut -c"1-$(tput cols)"
+  if ! DROPLETS=$(doctl compute droplet list --format ID,Status,Name,Memory,VCPUs,Disk,Region,Image) ;  then
+    error "${DROPLETS}"
+    exit 1
+  fi
+
+  api_curl_v2 GET /hosts "project_id=${LONGBOAT_PROJECT}" || exit 1
+  echo "${DROPLETS}" | head -1 | cut -c"1-$(tput cols)"
+  echo "${CURL_RESPONSE}" | jq --raw-output .[].provider_id | while read -r ID ; do
+    if [ "${ID}" != "null" ]; then
+      echo "${DROPLETS}" | grep "${ID}" | cut -c"1-$(tput cols)"
+    fi
+  done
   ;;
 
 "create")
