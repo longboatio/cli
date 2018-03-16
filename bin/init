@@ -34,10 +34,9 @@ if [ "${CURL_CODE}" == "200" ]; then
     echo "# Longboat API Configuration"
     echo "LONGBOAT_PROJECT=\"${PROJECTID}\""
     echo ""
-    echo "# Automatically create empty vars dirs and files for hosts, groups and"
-    echo "# environments if they don't exist:"
-    echo "#LONGBOAT_PULL_HOST_VARS=\"true\""
-    echo "#LONGBOAT_PULL_GROUP_VARS=\"true\""
+    echo "# There is a lot more configuration options to be tweaked:"
+    echo "# https://github.com/longboatio/longboat/blob/master/etc/defaults.cfg"
+    echo ""
   } > longboat.cfg
   git add longboat.cfg
 
