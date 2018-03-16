@@ -46,16 +46,6 @@ case "${ARGUMENT}" in
     exit 1
   fi
 
-  # Check for droplet size
-  if [ -z "${DO_DROPLET_SIZE}" ] ; then
-    error "Please set droplet size in ${BLUE}longboat.cfg${NC} - ie.:"
-    space "DO_DROPLET_SIZE=\"s-1vcpu-1gb\""
-    info "Querying Digitalocean for sizes..."
-    echo
-    doctl compute size list
-    exit 1
-  fi
-
   # Check for droplet image
   if [ -z "${DO_DROPLET_IMAGE}" ] ; then
     error "Please set droplet image in ${BLUE}longboat.cfg${NC} - ie.:"
@@ -63,6 +53,16 @@ case "${ARGUMENT}" in
     info "Querying Digitalocean for sizes..."
     echo
     doctl compute image list-distribution --public
+    exit 1
+  fi
+
+  # Check for droplet size
+  if [ -z "${DO_DROPLET_SIZE}" ] ; then
+    error "Please set droplet size in ${BLUE}longboat.cfg${NC} - ie.:"
+    space "DO_DROPLET_SIZE=\"s-1vcpu-1gb\""
+    info "Querying Digitalocean for sizes..."
+    echo
+    doctl compute size list
     exit 1
   fi
 
