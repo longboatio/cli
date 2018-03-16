@@ -1,16 +1,8 @@
 #!/usr/bin/env bash
 
 # Check for curl
-if command -v curl > /dev/null
+if ! command -v curl > /dev/null
 then
-  CURL_VERSION=$(curl --version | head -1 | awk '{print $2}')
-  if ! version_gt "${CURL_VERSION}" "7.55.0"
-  then
-    error "curl v7.55.0 or greater is required, but found v${CURL_VERSION}"
-    space "Read more on https://docs.longboat.io/cli/index.html#requirements"
-    exit 1
-  fi
-else
   error "curl command not found!"
   space "Read more on https://docs.longboat.io/cli/index.html#requirements"
   exit 1
@@ -69,12 +61,10 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     exit 0
   fi
 else
-  echo ""
-  echo "LONGBOAT_TOKEN is already set."
+  error "LONGBOAT_TOKEN is already set."
 fi
 
-echo ""
-echo "If you want to change your token, simply update the"
-echo "content of LONGBOAT_TOKEN in the file: ${USERCONFIG}"
+space "If you want to change your token, simply update the"
+space "content of LONGBOAT_TOKEN in the file: ${USERCONFIG}"
 
 exit 1

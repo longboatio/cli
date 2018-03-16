@@ -38,31 +38,36 @@ function echo_json() {
 }
 
 function api_curl() {
-  local ARGS=""
-  local METHOD="$1"
-  local URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2"
-  local CURL_HEADER="${USERCONFIGDIR}/curl_header"
-  local CURL_TMP="/tmp/longboat.curl.$$"
+  local CURL_CONFIG="${USERCONFIGDIR}/curl_config.$$"
+  local CURL_TMP="${USERCONFIGDIR}/curl_out.$$"
 
   # Prepare Files
-  touch "${CURL_HEADER}" "${CURL_TMP}"
-  chmod 600 "${CURL_HEADER}" "${CURL_TMP}"
-  echo "Authorization: Bearer ${LONGBOAT_TOKEN}" > "${CURL_HEADER}"
+  touch "${CURL_CONFIG}" "${CURL_TMP}"
+  chmod 600 "${CURL_CONFIG}" "${CURL_TMP}"
+  {
+    echo "request = \"$1\""
+    echo "url = \"${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2\""
+    echo "output = \"${CURL_TMP}\""
+    echo "write-out = \"%{http_code}\""
+    echo "silent"
+    echo "header = \"Authorization: Bearer ${LONGBOAT_TOKEN}\""
+    echo "header = \"Accept: application/json\""
+  }  > "${CURL_CONFIG}"
 
   # Create arguments for CURL request
   if [ $# -gt 2 ]; then
     for ARG in "${@:3}"; do
       if [ ! -z "${ARG}" ]; then
-        ARGS="${ARGS} --data-urlencode ${ARG}"
+        echo "data-urlencode = \"${ARG}\"" >> "${CURL_CONFIG}"
       fi
     done
   fi
 
-  # shellcheck disable=SC2086
-  CURL_CODE=$(curl -s -w "%{http_code}" -o "${CURL_TMP}" --header "@${CURL_HEADER}" ${ARGS} -X "${METHOD}" "${URL}")
+  # Make curl request
+  CURL_CODE=$(curl --config "${CURL_CONFIG}")
   CURL_EXIT="$?"
   CURL_RESPONSE=$(cat "${CURL_TMP}")
-  rm "${CURL_TMP}"
+  rm "${CURL_CONFIG}" "${CURL_TMP}"
 
   if [ ${CURL_EXIT} -gt 0 ]; then
     echo "ERROR! API request failed - curl error code ${CURL_EXIT}"
@@ -82,31 +87,36 @@ function api_curl() {
 }
 
 function api_curl_v2() {
-  local ARGS=""
-  local METHOD="$1"
-  local URL="${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2"
-  local CURL_HEADER="${USERCONFIGDIR}/curl_header"
-  local CURL_TMP="/tmp/longboat.curl.$$"
+  local CURL_CONFIG="${USERCONFIGDIR}/curl_config.$$"
+  local CURL_TMP="${USERCONFIGDIR}/curl_out.$$"
 
   # Prepare Files
-  touch "${CURL_HEADER}" "${CURL_TMP}"
-  chmod 600 "${CURL_HEADER}" "${CURL_TMP}"
-  echo "Authorization: Bearer ${LONGBOAT_TOKEN}" > "${CURL_HEADER}"
+  touch "${CURL_CONFIG}" "${CURL_TMP}"
+  chmod 600 "${CURL_CONFIG}" "${CURL_TMP}"
+  {
+    echo "request = \"$1\""
+    echo "url = \"${LONGBOAT_ENDPOINT}/${LONGBOAT_API}$2\""
+    echo "output = \"${CURL_TMP}\""
+    echo "write-out = \"%{http_code}\""
+    echo "silent"
+    echo "header = \"Authorization: Bearer ${LONGBOAT_TOKEN}\""
+    echo "header = \"Accept: application/json\""
+  }  > "${CURL_CONFIG}"
 
   # Create arguments for CURL request
   if [ $# -gt 2 ]; then
     for ARG in "${@:3}"; do
       if [ ! -z "${ARG}" ]; then
-        ARGS="${ARGS} --data-urlencode ${ARG}"
+        echo "data-urlencode = \"${ARG}\"" >> "${CURL_CONFIG}"
       fi
     done
   fi
 
-  # shellcheck disable=SC2086
-  CURL_CODE=$(curl -s -w "%{http_code}" -o "${CURL_TMP}" --header "@${CURL_HEADER}" ${ARGS} -X "${METHOD}" "${URL}")
+  # Make curl request
+  CURL_CODE=$(curl --config "${CURL_CONFIG}")
   CURL_EXIT="$?"
   CURL_RESPONSE=$(cat "${CURL_TMP}")
-  rm "${CURL_TMP}"
+  rm "${CURL_CONFIG}" "${CURL_TMP}"
 
   # Check for curl exit code
   if [ "${CURL_EXIT}" -gt 0 ]; then
