@@ -2,15 +2,15 @@
 
 CURL_SILENT=true
 
-echo "==> Updating local user files"
+info "Updating user files"
 user_hosts_update
 
 if [ -z "${LONGBOAT_PROJECT}" ]; then
-  echo "==> Skipping project updates, not in a Longboat project directory."
+  info "Skipping project updates, not in a Longboat project directory."
   exit 0
 fi
 
-echo "==> Updating environments"
+info "Updating environments"
 api_curl GET /environments "project_id=${LONGBOAT_PROJECT}"
 if [ "${CURL_CODE}" == "200" ]; then
   ENVIRONMENTS=$(echo "${CURL_RESPONSE}" | jq -r '.[]["name"]')
@@ -27,12 +27,12 @@ if [ "${CURL_CODE}" == "200" ]; then
     chmod 755 "${PROJECTDIR}/${ENVNAME}"
   done
 else
-  echo "ERROR: Could not get environments from api:"
+  error "Could not get environments from api:"
   echo_json "${CURL_RESPONSE}"
 fi
 
 if [ "${LONGBOAT_PULL_HOST_VARS}" == "true" ]; then
-  echo "==> Updating host_vars"
+  info "Updating host_vars"
   mkdir -p "${PROJECTDIR}/host_vars"
   api_curl GET /hosts "project_id=${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
@@ -48,13 +48,13 @@ if [ "${LONGBOAT_PULL_HOST_VARS}" == "true" ]; then
       fi
     done
   else
-    echo "ERROR: Could not get hosts from api:"
+    error "Could not get hosts from api:"
     echo_json "${CURL_RESPONSE}"
   fi
 fi
 
 if [ "${LONGBOAT_PULL_GROUP_VARS}" == "true" ]; then
-  echo "==> Updating group_vars"
+  info "Updating group_vars"
   mkdir -p "${PROJECTDIR}/group_vars"
   # All
   GROUPDIR="${PROJECTDIR}/group_vars/all"
@@ -102,7 +102,7 @@ if [ "${LONGBOAT_PULL_GROUP_VARS}" == "true" ]; then
       fi
     done
   else
-    echo "ERROR: Could not get groups from api:"
+    error "Could not get groups from api:"
     echo_json "${CURL_RESPONSE}"
   fi
 fi
@@ -110,7 +110,7 @@ fi
 if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
   find roles -maxdepth 1 -not -path "roles" | while read -r ROLE ; do
     if [ -f "${ROLE}/.git/config" ]; then
-      echo "==> Updating ${ROLE}"
+      info "Updating ${ROLE}"
       cd "./${ROLE}" || exit
       git pull --quiet
       cd ../../ || exit
