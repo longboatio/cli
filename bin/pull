@@ -36,7 +36,7 @@ if [ "${LONGBOAT_PULL_HOST_VARS}" == "true" ]; then
   mkdir -p "${PROJECTDIR}/host_vars"
   api_curl GET /hosts "project_id=${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
-    echo "${CURL_RESPONSE}" | jq -r '.[]["short"]' | while read -r HOST ; do
+    echo "${CURL_RESPONSE}" | jq -r '.[]["name"]' | while read -r HOST ; do
       HOSTFILE="${PROJECTDIR}/host_vars/${HOST}.yml"
       if [ ! -f "${HOSTFILE}" ]; then
         {
