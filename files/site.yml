@@ -11,3 +11,14 @@
     - longboat/hostname/v1
     - longboat/users/v1
 
+# Setup UFW (firewall) on all hosts - IMPORTANT: Read the documentation first:
+# https://github.com/longboatio/roles/tree/master/ufw/v1
+#- hosts: all
+#  roles:
+#    - longboat/ufw/v1
+
+# Install do-agent on hosts in group: digitalocean
+#- hosts: digitalocean
+#  roles:
+#    - longboat/do-agent/v1
+
