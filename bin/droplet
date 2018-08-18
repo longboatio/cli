@@ -82,18 +82,19 @@ case "${ARGUMENT}" in
   HOST_ENV="$4"
   api_curl_v2 POST /hosts "name=${HOST_SHORT}" "environment_name=${HOST_ENV}" "project_id=${LONGBOAT_PROJECT}" || exit 1
   HOST_ID=$(echo "${CURL_RESPONSE}" | jq -r '.id')
-  HOST_NAME=$(echo "${CURL_RESPONSE}" | jq -r '.fqdn')
-  if [ "${HOST_NAME}" == "null" ]; then
-    HOST_NAME=$(echo "${CURL_RESPONSE}" | jq -r '.name')
-    if [ "${HOST_NAME}" == "null" ]; then
+  HOST_NAME=$(echo "${CURL_RESPONSE}" | jq -r '.name')
+  HOST_FQDN=$(echo "${CURL_RESPONSE}" | jq -r '.fqdn')
+  if [ "${HOST_FQDN}" == "null" ]; then
+    HOST_FQDN=$(echo "${CURL_RESPONSE}" | jq -r '.name')
+    if [ "${HOST_FQDN}" == "null" ]; then
       error "Can't create droplet, no host name!"
       exit 1
     fi
   fi
-  ok "Longboat host ${BLUE}${HOST_NAME}${NC} created"
+  ok "Longboat host ${BLUE}${HOST_FQDN}${NC} created"
 
   info "Bootstrapping ${BLUE}${DO_DROPLET_SIZE}${NC} with ${BLUE}${DO_DROPLET_IMAGE}${NC} in ${BLUE}${DO_DROPLET_REGION}${NC}"
-  if DROPLET_ID=$(doctl compute droplet create "${HOST_NAME}" \
+  if DROPLET_ID=$(doctl compute droplet create "${HOST_FQDN}" \
     --no-header \
     --format "ID" \
     --size "${DO_DROPLET_SIZE}" \
@@ -157,7 +158,7 @@ case "${ARGUMENT}" in
   api_curl_v2 POST "/hosts/${HOST_ID}/keys" "hostkeys@${TMPFILE}"
   rm "${TMPFILE}"
   if [ "${CURL_CODE}" == "200" ]; then
-    ok "Host keys added for ${BLUE}${HOST_NAME}${NC}"
+    ok "Host keys added for ${BLUE}${HOST_FQDN}${NC}"
     user_hosts_update
   else
     error "Could not set host keys - API response was:"
@@ -166,7 +167,7 @@ case "${ARGUMENT}" in
   fi
 
   if [ ! -z "${LONGBOAT_BOOTSTRAP_COMMAND}" ] ; then
-    info "Running custom bootstrap command on ${BLUE}${HOST_NAME}${NC}"
+    info "Running custom bootstrap command on ${BLUE}${HOST_FQDN}${NC}"
     # shellcheck disable=SC2029
     if ! OUTPUT=$(ssh "root@${DROPLET_IPV4}" "${LONGBOAT_BOOTSTRAP_COMMAND}" 2>&1) ; then
       echo "${OUTPUT}" > ./bootstrap-command-error.log
@@ -174,11 +175,11 @@ case "${ARGUMENT}" in
     fi
   fi
 
-  info "Running ${BLUE}ansible-playbook ${LONGBOAT_BOOTSTRAP_PLAYBOOK}${NC} on ${BLUE}${HOST_NAME}${NC}"
+  info "Running ${BLUE}ansible-playbook ${LONGBOAT_BOOTSTRAP_PLAYBOOK}${NC} on ${BLUE}${HOST_FQDN}${NC}"
 
   if ! PLAYBOOK=$(ANSIBLE_BECOME=false ANSIBLE_BECOME_ASK_PASS=false ansible-playbook "${LONGBOAT_BOOTSTRAP_PLAYBOOK}" \
     --inventory="${HOST_ENV}" \
-    --limit="${HOST_SHORT}.${HOST_ENV}" \
+    --limit="${HOST_NAME}" \
     --extra-vars="ansible_host=${DROPLET_IPV4}" \
     --extra-vars="ansible_user=root") ; then
     echo "${PLAYBOOK}" > ./bootstrap-playbook-error.log
