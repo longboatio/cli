@@ -14,16 +14,13 @@ User commands:
 
 Project commands:
   init        Intialize a new project directory.
+  project     Manage projects.
   env         Manage environments.
   host        Manage hosts.
   group       Manage host groups.
-  droplet     Create droplets with Digitalocean.
-
-Organization commands:
-  org         Manage your organizations.
-  project     Manage projects.
   domain      Manage domains.
   rr          Manage dns records for domains.
+  droplet     Create droplets with Digitalocean.
 
 Ansible commands:
   inventory   Get inventory from API. Used by ansible.

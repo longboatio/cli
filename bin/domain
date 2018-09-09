@@ -14,7 +14,7 @@ case "${ARGUMENT}" in
   ;;
 
 "create")
-  api_curl POST /domain "name=$3" "organization_name=$4"
+  api_curl POST /domain "name=$3" "project_id=${LONGBOAT_PROJECT}"
   ;;
 
 "delete")

@@ -1,5 +1,5 @@
-boat domain create <domain-name> <organization-name>
+boat domain create <domain-name>
 
-    Creates a domain for projects.
-    Example: boat domain create example.com example-corp
+    Creates a domain in a project
+    Example: boat domain create example.com
 

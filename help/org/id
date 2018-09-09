@@ -1,5 +1,0 @@
-boat org id <organization-id>
-
-    Get organization by id
-    Example: boat org id 12345
-

@@ -1,5 +1,5 @@
-boat project create <project-name> <organization-name>
+boat project create <project-name>
 
     Creates a new project.
-    Example: boat project create new-project example-corp
+    Example: boat project create new-project
 
