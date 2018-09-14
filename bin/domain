@@ -2,23 +2,23 @@
 
 case "${ARGUMENT}" in
 "id")
-  api_curl GET "/domain/$3"
+  api_curl GET "/domain/$3" "project_id=${LONGBOAT_PROJECT}"
   ;;
 
 "get")
-  api_curl GET "/domain/name/$3"
+  api_curl GET "/domain/name/$3" "project_id=${LONGBOAT_PROJECT}"
   ;;
 
 "list")
-  api_curl GET "/domain"
+  api_curl GET "/domain" "project_id=${LONGBOAT_PROJECT}"
   ;;
 
 "create")
-  api_curl POST /domain "name=$3" "organization_name=$4"
+  api_curl POST /domain "name=$3" "project_id=${LONGBOAT_PROJECT}"
   ;;
 
 "delete")
-  api_curl GET "/domain/$3"
+  api_curl GET "/domain/$3" "project_id=${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
     confirm_delete DELETE "/domain/$3"
   fi
@@ -26,7 +26,7 @@ case "${ARGUMENT}" in
 
 "axfr")
   CURL_SILENT=true
-  api_curl GET "/domain/axfr/name/$3"
+  api_curl GET "/domain/axfr/name/$3" "project_id=${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
     echo "${CURL_RESPONSE}"
   else

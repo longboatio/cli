@@ -1,5 +1,5 @@
 boat domain list
 
-    List all domains across all organisations.
+    List all domains in a project
     Example: boat domain list
 

@@ -56,9 +56,6 @@ case "${COMMAND}" in
 "sshkey")
   # shellcheck source=bin/sshkey
   source "${BOATDIR}/bin/sshkey" ; exit $? ;;
-"org")
-  # shellcheck source=bin/organization
-  source "${BOATDIR}/bin/organization" ; exit $? ;;
 "domain")
   # shellcheck source=bin/domain
   source "${BOATDIR}/bin/domain" ; exit $? ;;
