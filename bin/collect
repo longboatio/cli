@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+TMPFILE="/tmp/longboat.collect.$$"
+touch "${TMPFILE}"
+chmod 600 "${TMPFILE}"
+cat > "${TMPFILE}"
+api_curl POST "/collect/play" "project_id=${LONGBOAT_PROJECT}" "data@${TMPFILE}"
+rm "${TMPFILE}"
+
+if [ "${CURL_CODE}" != "200" ]; then
+  warn "Longboat API returned ${CURL_CODE}"
+  exit 1
+fi
+
+exit 0
+
