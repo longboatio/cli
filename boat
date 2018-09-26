@@ -41,6 +41,9 @@ for HELPARG in "$@"; do
 done
 
 case "${COMMAND}" in
+"collect")
+  # shellcheck source=bin/collect
+  source "${BOATDIR}/bin/collect" ; exit $? ;;
 "doctor")
   # shellcheck source=bin/doctor
   source "${BOATDIR}/bin/doctor" ; exit $? ;;
