@@ -51,9 +51,26 @@ else
   space "you are planning on using Ansible with Longboat, it should be installed."
 fi
 
+# User configuration
+
 headline "Longboat User"
 
-# User configuration
+# Check for LONGBOAT_CLI
+# shellcheck disable=SC2153
+if [ -z "${LONGBOAT_CLI}" ] ; then
+  error "LONGBOAT_CLI is not set in your environment and some features"
+  space "might not work!"
+  space "How to setup CLI: https://docs.longboat.io/cli/index.html"
+else
+  if [ -f "${LONGBOAT_CLI}/boat" ] ; then
+    ok "LONGBOAT_CLI is set to ${PURPLE}${LONGBOAT_CLI}${NC}"
+  else
+    error "LONGBOAT_CLI is set to ${PURPLE}${LONGBOAT_CLI}${NC}"
+    space "but the file ${PURPLE}${LONGBOAT_CLI}/boat${NC} is not found!"
+    space "How to setup CLI: https://docs.longboat.io/cli/index.html"
+  fi
+fi
+
 if [ -f "${USERCONFIG}" ]; then
   ok "Config file found"
 
@@ -122,7 +139,6 @@ headline "The Doctor's Conclusion"
 
 if [ "${FOUNDERROR}" == "true" ]; then
   error "Unfortunately errors was found :("
-  space "Please follow the documentation links for more information."
   exit 1
 fi
 
