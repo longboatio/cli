@@ -44,10 +44,14 @@ fi
 if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
   find roles -maxdepth 1 -not -path "roles" | while read -r ROLE ; do
     if [ -f "${ROLE}/.git/config" ]; then
-      info "Updating ${ROLE}"
-      cd "./${ROLE}" || exit
-      git pull --quiet
-      cd ../../ || exit
+      info "Updating role ${ROLE}"
+      cd "./${ROLE}" || exit 1
+      if git diff-index --quiet HEAD --; then
+        git pull --quiet
+      else
+        error "Cannot update ${ROLE} due to local uncommitted changes"
+      fi
+      cd ../../ || exit 1
     fi
   done
 fi
