@@ -33,6 +33,14 @@ if [ "${LONGBOAT_PULL_ENVS}" == "true" ]; then
   fi
 fi
 
+if [ "${LONGBOAT_PULL_CALLBACK_PLUGIN}" == "true" ]; then
+  if [ ! -d "callback_plugins" ]; then
+    mkdir callback_plugins
+  fi
+  info "Updating callback plugin"
+  cp "${BOATDIR}/files/longboat.py" callback_plugins/longboat.py
+fi
+
 if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
   find roles -maxdepth 1 -not -path "roles" | while read -r ROLE ; do
     if [ -f "${ROLE}/.git/config" ]; then
