@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+CURL_SILENT=true
+CURL_CONTINUE=true
+
 TMPFILE="/tmp/longboat.collect.$$"
 touch "${TMPFILE}"
 chmod 600 "${TMPFILE}"
@@ -8,7 +11,11 @@ api_curl POST "/collect/play" "project_id=${LONGBOAT_PROJECT}" "data@${TMPFILE}"
 rm "${TMPFILE}"
 
 if [ "${CURL_CODE}" != "200" ]; then
-  warn "Longboat API returned ${CURL_CODE}"
+  MESSAGE=""
+  if [ "${CURL_CODE}" == "400" ]; then
+    MESSAGE=$(echo "${CURL_RESPONSE}" | jq -r '.["errors"][0]')
+  fi
+  error "Could not send data to Longboat API! HTTP status ${CURL_CODE} ${MESSAGE}"
   exit 1
 fi
 
