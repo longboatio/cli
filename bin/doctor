@@ -72,22 +72,19 @@ else
 fi
 
 if [ -f "${USERCONFIG}" ]; then
-  ok "Config file found"
 
   # API Token
   if [ -z "${LONGBOAT_TOKEN}" ]; then
     error "LONGBOAT_TOKEN not found!"
     space "You might need to run 'boat auth'"
     space "Read more on https://docs.longboat.io/cli/index.html#authorization"
-  else
-    ok "Longboat token found"
   fi
 
   # Test API User Request
   CURL_SILENT=true
   api_curl GET /doctor/user
   if [ "${CURL_CODE}" == "200" ]; then
-    ok "API says: ${PURPLE}${CURL_RESPONSE}${NC}"
+    ok "API says you are ${PURPLE}${CURL_RESPONSE}${NC}"
   else
     error "Longboat API did not respond correctly - error was:"
     space "${CURL_RESPONSE}"
@@ -104,7 +101,6 @@ headline "Longboat Project"
 
 # Project configuration
 if [ -f ./longboat.cfg ]; then
-  ok "Project config file found"
 
   # API Project
   if [ -z "${LONGBOAT_PROJECT}" ]; then
@@ -117,18 +113,10 @@ if [ -f ./longboat.cfg ]; then
   CURL_SILENT=true
   api_curl GET "/doctor/project/${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
-    ok "API says project name is: ${PURPLE}${CURL_RESPONSE}${NC}"
+    ok "API says project is: ${PURPLE}${CURL_RESPONSE}${NC}"
   else
     error "Longboat API did not respond correctly - error was:"
     space "${CURL_RESPONSE}"
-  fi
-
-  # Longboat roles
-  if [ -d roles ]; then
-    ok "Longboat roles found."
-  else
-    error "Longboat roles not found!"
-    space "You might need to run: boat pull"
   fi
 
 else
