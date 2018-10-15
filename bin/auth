@@ -52,7 +52,6 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     # Write Longboat config file
     echo "# Longboat API Configuration" > "${USERCONFIG}"
     echo "LONGBOAT_TOKEN=\"${TOKEN}\"" >> "${USERCONFIG}"
-    echo "LONGBOAT_PATH=\"${BOATDIR}\"" >> "${USERCONFIG}"
 
     # Update user local files
     user_hosts_update

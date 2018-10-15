@@ -6,14 +6,13 @@ info "Updating user files"
 user_hosts_update
 
 if [ -z "${LONGBOAT_PROJECT}" ]; then
-  info "Skipping project updates, not in a Longboat project directory."
   exit 0
 fi
 
 if [ "${LONGBOAT_PULL_ENVS}" == "true" ]; then
-  info "Updating environments"
   api_curl GET /environments "project_id=${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
+    info "Updating environments"
     ENVIRONMENTS=$(echo "${CURL_RESPONSE}" | jq -r '.[]["name"]')
     echo "${ENVIRONMENTS}" | while read -r ENVNAME ; do
       {
@@ -23,7 +22,7 @@ if [ "${LONGBOAT_PULL_ENVS}" == "true" ]; then
         echo "# Changes will be overwritten on: boat pull"
         echo ""
         echo "source \${HOME}/.longboat/config"
-        echo "\${LONGBOAT_PATH}/boat inventory ${ENVNAME}"
+        echo "\${LONGBOAT_CLI}/boat inventory ${ENVNAME}"
       } > "${PROJECTDIR}/${ENVNAME}"
       chmod 755 "${PROJECTDIR}/${ENVNAME}"
     done
