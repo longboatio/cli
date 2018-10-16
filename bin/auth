@@ -23,7 +23,7 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
   else
     # Ask for Token
     echo "==> Longboat requires an API token. If you don't have one, get it"
-    echo "==> from: https://gorm.longboat.io/token/list"
+    echo "==> from: https://longboat.io/token/list"
     echo ""
     echo -n "Longboat API Token: "
     read -r TOKEN
