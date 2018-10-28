@@ -1,8 +1,7 @@
-Usage: boat pull
+Usage: boat pull [project-id]
 
-Pull the latest changes from the Longboat Project. You need to be in a 
-project directory. The updates include:
+Pull the latest updates for the Longboat Project.
 
-* Create (og recreate) all environment files
-* Git clone the Longboat roles repository (roles/longboat)
+The `project-id` argument is optional and only used during the initial setup
+for a Longboat project.
 
