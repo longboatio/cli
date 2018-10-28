@@ -1,57 +1,115 @@
 #!/usr/bin/env bash
 
 CURL_SILENT=true
+CURL_CONTINUE=true
 
 info "Updating user files"
 user_hosts_update
 
+# Initialize a new project
+if [ ! -z "${ARGUMENT}" ]; then
+
+  LONGBOAT_PROJECT="${ARGUMENT}"
+
+  info "Initializing Longboat project"
+
+  # Do not initialize a dir that already has a longboat.cfg
+  if [ -f "longboat.cfg" ] ; then
+    error "There is already a longboat.cfg file, can't continue"
+    exit 1
+  fi
+
+  # Check for .git and local uncommitted changes
+  if [ -d ".git" ] ; then
+    if ! git diff-index --quiet HEAD -- ; then
+      error "Local uncomitted git changes, can't continue"
+      exit 1
+    fi
+  fi
+
+  # Make sure project exists and create longboat.cfg
+  api_curl GET "/project/${LONGBOAT_PROJECT}"
+  if [ "${CURL_CODE}" == "200" ]; then
+    info "Writing config to ${BLUE}longboat.cfg${NC}"
+    {
+      echo "# Longboat API Configuration"
+      echo "LONGBOAT_PROJECT=\"${LONGBOAT_PROJECT}\""
+      echo ""
+      echo "# There is a other configuration options to be tweaked:"
+      echo "# https://github.com/longboatio/longboat/blob/master/etc/defaults.cfg"
+      echo ""
+    } > longboat.cfg
+  else
+    error "$(echo "${CURL_RESPONSE}" | jq -r '.["errors"][0]')"
+    exit 1
+  fi
+fi
+
+# If project id isn't set, just halt
 if [ -z "${LONGBOAT_PROJECT}" ]; then
   exit 0
+fi
+
+# Update longboat plugin to latest version
+if [ "${LONGBOAT_PULL_CALLBACK_PLUGIN}" == "true" ]; then
+  info "Updating ${BLUE}callback_plugin/longboat.py${NC}"
+  if [ ! -d "callback_plugins" ]; then
+    mkdir callback_plugins
+  fi
+  cp "${BOATDIR}/files/longboat.py" callback_plugins/longboat.py
 fi
 
 if [ "${LONGBOAT_PULL_ENVS}" == "true" ]; then
   api_curl GET /environments "project_id=${LONGBOAT_PROJECT}"
   if [ "${CURL_CODE}" == "200" ]; then
-    info "Updating environments"
     ENVIRONMENTS=$(echo "${CURL_RESPONSE}" | jq -r '.[]["name"]')
-    echo "${ENVIRONMENTS}" | while read -r ENVNAME ; do
-      {
-        echo "#!/usr/bin/env bash"
-        echo ""
-        echo "# DO NOT CHANGE THIS FILE!"
-        echo "# Changes will be overwritten on: boat pull"
-        echo ""
-        echo "source \${HOME}/.longboat/config"
-        echo "\${LONGBOAT_CLI}/boat inventory ${ENVNAME}"
-      } > "${PROJECTDIR}/${ENVNAME}"
-      chmod 755 "${PROJECTDIR}/${ENVNAME}"
-    done
+
+    # Create environments files
+    if [ ! -z "${ENVIRONMENTS}" ] ; then
+      info "Updating environment files"
+      echo "${ENVIRONMENTS}" | while read -r ENVNAME ; do
+        {
+          echo "#!/usr/bin/env bash"
+          echo ""
+          echo "# DO NOT CHANGE THIS FILE!"
+          echo "# Changes will be overwritten on: boat pull"
+          echo ""
+          echo "source \${HOME}/.longboat/config"
+          echo "\${LONGBOAT_CLI}/boat inventory ${ENVNAME}"
+        } > "${PROJECTDIR}/${ENVNAME}"
+        chmod 755 "${PROJECTDIR}/${ENVNAME}"
+      done
+
+      # Initialize Longboat roles if environments exists
+      if [ "${LONGBOAT_PULL_INIT_ROLES}" == "true" ]; then
+        if [ ! -d "./roles/longboat" ]; then
+          info "Git cloning Longboats Roles into roles/longboat"
+          test -d ./roles || mkdir roles
+          git clone --quiet https://github.com/longboatio/roles.git roles/longboat
+        fi
+      fi
+    fi
+
   else
     error "Could not get environments from api:"
     echo_json "${CURL_RESPONSE}"
   fi
 fi
 
-if [ "${LONGBOAT_PULL_CALLBACK_PLUGIN}" == "true" ]; then
-  if [ ! -d "callback_plugins" ]; then
-    mkdir callback_plugins
-  fi
-  info "Updating callback plugin"
-  cp "${BOATDIR}/files/longboat.py" callback_plugins/longboat.py
-fi
-
-if [ "${LONGBOAT_PULL_ROLES}" == "true" ]; then
-  find roles -maxdepth 1 -not -path "roles" | while read -r ROLE ; do
-    if [ -f "${ROLE}/.git/config" ]; then
-      info "Updating role ${ROLE}"
-      cd "./${ROLE}" || exit 1
-      if git diff-index --quiet HEAD --; then
-        git pull --quiet
-      else
-        error "Cannot update ${ROLE} due to local uncommitted changes"
+if [ "${LONGBOAT_PULL_ALL_ROLES}" == "true" ]; then
+  if [ -d "roles" ]; then
+    find roles -maxdepth 1 -not -path "roles" | while read -r ROLE ; do
+      if [ -f "${ROLE}/.git/config" ]; then
+        info "Updating role ${ROLE}"
+        cd "./${ROLE}" || exit 1
+        if git diff-index --quiet HEAD --; then
+          git pull --quiet
+        else
+          error "Skipping git pull ${ROLE} due to local uncommitted changes"
+        fi
+        cd ../../ || exit 1
       fi
-      cd ../../ || exit 1
-    fi
-  done
+    done
+  fi
 fi
 
