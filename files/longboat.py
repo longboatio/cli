@@ -32,6 +32,7 @@ examples: >
 '''
 
 import os
+import sys
 import json
 import uuid
 import socket
@@ -82,7 +83,11 @@ class LongboatCollectorSource(object):
 
         jsondata = json.dumps(data, sort_keys=True)
 
-        proc = Popen([os.environ['LONGBOAT_CLI'] + '/boat','collect'], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        if sys.version_info[0] < 3:
+            proc = Popen([os.environ['LONGBOAT_CLI'] + '/boat','collect'], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+        else:
+            proc = Popen([os.environ['LONGBOAT_CLI'] + '/boat','collect'], stdout=PIPE, stdin=PIPE, stderr=STDOUT, encoding='utf8')
+
         (stdout_data, stderr_data) = proc.communicate(input=jsondata)
         if proc.returncode > 0:
             print(stdout_data)
