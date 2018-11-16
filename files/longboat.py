@@ -157,5 +157,5 @@ class CallbackModule(CallbackBase):
         )
 
     def v2_playbook_on_stats(self, stats):
-        self._display.display("https://longboat.io/logbook/session/" + self.longboat.session)
+        self._display.display("https://longboat.io/playbook/" + self.longboat.session)
 
