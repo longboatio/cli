@@ -63,7 +63,7 @@ fi
 # Setup LONGBOAT_CLI and alias
 
 if [ -z "${LONGBOAT_CLI}" ] ; then
-  if [[ "${SHELL}" != *"bash" ]] ; then
+  if [[ "${SHELL}" == *"bash" ]] ; then
     # Setup boat command in ~/.bash_profile
     {
       echo
