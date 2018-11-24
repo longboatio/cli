@@ -22,8 +22,8 @@ if [ -z "${LONGBOAT_TOKEN}" ]; then
     echo "Config file already exists in ${USERCONFIG}"
   else
     # Ask for Token
-    echo "==> Longboat requires an API token. If you don't have one, get it"
-    echo "==> from: https://longboat.io/token/list"
+    echo "Longboat requires an API token. If you don't have one, create it"
+    echo "on https://longboat.io/token/list"
     echo ""
     echo -n "Longboat API Token: "
     read -r TOKEN
