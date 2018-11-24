@@ -1,0 +1,102 @@
+#!/usr/bin/env bash
+
+MISSING_PKGS=""
+PKGMGR=""
+BOATDIR=$(dirname "$0")
+BOATDIR=$(cd "${BOATDIR}" && pwd)
+
+# Check for known package managers
+
+if command -v brew > /dev/null ; then
+  PKGMGR="brew"
+elif command -v apt-get > /dev/null ; then
+  PKGMGR="sudo apt-get"
+fi
+
+# Check for package requirements
+
+for PKG in curl git jq ; do
+  if ! command -v "${PKG}" > /dev/null ; then
+    MISSING_PKGS="${MISSING_PKGS}${PKG} "
+  fi
+done
+
+if [ ! -z "${MISSING_PKGS}" ] ; then
+  if [ -z "${PKGMGR}" ] ; then
+    echo "Required packages not found. Please install:"
+    echo
+    echo "    ${MISSING_PKGS}"
+    echo
+    echo "And run setup again."
+    exit 1
+  else
+    echo "Would like to install missing requirements by running:"
+    echo
+    echo "    ${PKGMGR} install ${MISSING_PKGS}"
+    echo
+    echo -n "Is that okay with you? (Y/n) "
+  fi
+
+  read -r CONFIRM
+  if [ -z "${CONFIRM}" ] || [ "${CONFIRM}" == "y" ] ; then
+    echo
+    echo "===> Start installing packages <==="
+    # shellcheck disable=SC2086
+    ${PKGMGR} install ${MISSING_PKGS}
+    echo "===> End installing packages <==="
+    echo
+  else
+    echo "Okay, make sure the packages is installed and run setup again."
+    exit 1
+  fi
+
+  # Check for requirements one last time
+  for PKG in curl git jq ; do
+    if ! command -v "${PKG}" > /dev/null ; then
+      echo "Still can't find ${PKG} - make sure it installed successfully"
+      echo "and run setup again."
+      exit 1
+    fi
+  done
+fi
+
+# Setup LONGBOAT_CLI and alias
+
+if [ -z "${LONGBOAT_CLI}" ] ; then
+  if [[ "${SHELL}" == *"bash" ]] ; then
+    # Setup boat command in ~/.bash_profile
+    {
+      echo
+      echo "# Longboat"
+      echo "export LONGBOAT_CLI=\"${BOATDIR}\""
+      echo "alias boat=\"\${LONGBOAT_CLI}/boat\""
+    } >> "${HOME}/.bash_profile"
+
+    # Setup LONGBOAT_CLI (might need it for boat auth)
+    export LONGBOAT_CLI="${BOATDIR}"
+  else
+    echo "Don't know how to setup your shell."
+    echo "Please create an env variable alias:"
+    echo
+    echo "    export LONGBOAT_CLI=\"${BOATDIR}\""
+    echo "    alias boat=\"\${LONGBOAT_CLI}/boat\""
+    echo
+    echo "And run setup again."
+    exit 1
+  fi
+fi
+
+# Load existing configuration (if it exists)
+
+if [ -f "${HOME}/.longboat/config" ] ; then
+  # shellcheck disable=SC1090
+  source "${HOME}/.longboat/config"
+fi
+
+if [ -z "${LONGBOAT_TOKEN}" ] ; then  
+  "${BOATDIR}/boat" auth
+fi
+
+echo "Longboat CLI setup completed!"
+echo "Restart your shell or run: source ${HOME}/.bash_profile"
+
