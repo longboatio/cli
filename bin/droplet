@@ -166,7 +166,7 @@ case "${ARGUMENT}" in
     exit 1
   fi
 
-  if [ ! -z "${LONGBOAT_BOOTSTRAP_COMMAND}" ] ; then
+  if [ -n "${LONGBOAT_BOOTSTRAP_COMMAND}" ] ; then
     info "Running custom bootstrap command on ${BLUE}${HOST_FQDN}${NC}"
     # shellcheck disable=SC2029
     if ! OUTPUT=$(ssh "root@${DROPLET_IPV4}" "${LONGBOAT_BOOTSTRAP_COMMAND}" 2>&1) ; then
