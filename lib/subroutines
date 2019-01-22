@@ -57,7 +57,7 @@ function api_curl() {
   # Create arguments for CURL request
   if [ $# -gt 2 ]; then
     for ARG in "${@:3}"; do
-      if [ ! -z "${ARG}" ]; then
+      if [ -n "${ARG}" ]; then
         echo "data-urlencode = \"${ARG}\"" >> "${CURL_CONFIG}"
       fi
     done
@@ -106,7 +106,7 @@ function api_curl_v2() {
   # Create arguments for CURL request
   if [ $# -gt 2 ]; then
     for ARG in "${@:3}"; do
-      if [ ! -z "${ARG}" ]; then
+      if [ -n "${ARG}" ]; then
         echo "data-urlencode = \"${ARG}\"" >> "${CURL_CONFIG}"
       fi
     done

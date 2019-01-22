@@ -35,8 +35,6 @@ import os
 import sys
 import json
 import uuid
-import socket
-import getpass
 
 from subprocess import Popen, PIPE, STDOUT
 
@@ -44,7 +42,7 @@ from datetime import datetime
 from os.path import basename
 
 from ansible.plugins.callback import CallbackBase
-from ansible.module_utils.urls import open_url
+
 
 class LongboatCollectorSource(object):
     def __init__(self):
@@ -84,13 +82,15 @@ class LongboatCollectorSource(object):
         jsondata = json.dumps(data, sort_keys=True)
 
         if sys.version_info[0] < 3:
-            proc = Popen([os.environ['LONGBOAT_CLI'] + '/boat','collect'], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+            proc = Popen([os.environ['LONGBOAT_CLI'] + '/boat', 'collect'], stdout=PIPE, stdin=PIPE, stderr=STDOUT)
         else:
-            proc = Popen([os.environ['LONGBOAT_CLI'] + '/boat','collect'], stdout=PIPE, stdin=PIPE, stderr=STDOUT, encoding='utf8')
+            proc = Popen([os.environ['LONGBOAT_CLI'] + '/boat', 'collect'], stdout=PIPE, stdin=PIPE, stderr=STDOUT,
+                         encoding='utf8')
 
         (stdout_data, stderr_data) = proc.communicate(input=jsondata)
         if proc.returncode > 0:
             print(stdout_data)
+
 
 class CallbackModule(CallbackBase):
     CALLBACK_VERSION = 2.0
@@ -105,8 +105,8 @@ class CallbackModule(CallbackBase):
 
     def _runtime(self, result):
         return (
-            datetime.utcnow() -
-            self.start_datetimes[result._task._uuid]
+                datetime.utcnow() -
+                self.start_datetimes[result._task._uuid]
         ).total_seconds()
 
     def set_options(self, task_keys=None, var_options=None, direct=None):
@@ -158,4 +158,3 @@ class CallbackModule(CallbackBase):
 
     def v2_playbook_on_stats(self, stats):
         self._display.display("https://longboat.io/playbook/" + self.longboat.session)
-

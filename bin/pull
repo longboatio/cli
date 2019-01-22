@@ -7,7 +7,7 @@ info "Updating user files"
 user_hosts_update
 
 # Initialize a new project
-if [ ! -z "${ARGUMENT}" ]; then
+if [ -n "${ARGUMENT}" ]; then
 
   LONGBOAT_PROJECT="${ARGUMENT}"
 
@@ -65,7 +65,7 @@ if [ "${LONGBOAT_PULL_ENVS}" == "true" ]; then
     ENVIRONMENTS=$(echo "${CURL_RESPONSE}" | jq -r '.[]["name"]')
 
     # Create environments files
-    if [ ! -z "${ENVIRONMENTS}" ] ; then
+    if [ -n "${ENVIRONMENTS}" ] ; then
       info "Updating environment files"
       echo "${ENVIRONMENTS}" | while read -r ENVNAME ; do
         {
