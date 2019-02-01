@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+case "${ARGUMENT}" in
+"create")
+  if [ "$5" == "false" ] ; then
+    CHECKMODE="false"
+  else
+    CHECKMODE="true"
+  fi
+  api_curl POST /jobs "playbook=$3" "inventory=$4" "checkmode=${CHECKMODE}" "project_id=${LONGBOAT_PROJECT}" "$4" "$5"
+  ;;
+
+"run")
+  #CURL_SILENT=true
+  api_curl GET "/job/$3" "project_id=${LONGBOAT_PROJECT}"
+  ;;
+
+*)
+  echo "ERROR: Unknown job command! Try: boat job -h"
+  exit 1
+  ;;
+esac
