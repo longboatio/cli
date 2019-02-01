@@ -21,7 +21,7 @@ for PKG in curl git jq ; do
   fi
 done
 
-if [ ! -z "${MISSING_PKGS}" ] ; then
+if [ -n "${MISSING_PKGS}" ] ; then
   if [ -z "${PKGMGR}" ] ; then
     echo "Required packages not found. Please install:"
     echo
