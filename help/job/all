@@ -1,0 +1,13 @@
+job commands is for creating and running jobs.
+
+Usage:
+  boat job <command>
+
+Commands:
+  id | get    Get job information by id.
+  create      Create new job
+  run         Pick 1 job from queue, run it and exit.
+  agent       An extremely simple agent that picks job from the queue and
+              executes them in a loop.
+
+Use "boat job <command> -h" for more information about a command.

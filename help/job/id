@@ -1,0 +1,6 @@
+boat job id <job-id>
+
+    Get information about a job by it's id.
+
+    Examples: boat job id 12
+

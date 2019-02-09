@@ -1,0 +1,6 @@
+boat job run
+
+    Get a job pending in the queue, run it and exit.
+
+    Examples: boat job run
+

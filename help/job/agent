@@ -1,0 +1,8 @@
+boat job agent
+
+    A very simple endless loop, that spawns boat job run every 15 sec.
+
+    At this point, it only runs 1 job at a time.
+
+    Examples: boat job agent
+
