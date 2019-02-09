@@ -1,0 +1,19 @@
+boat job create <playbook.yml> <inventory> [limit=limits] [tags=tags] [check=true]
+
+    Create a new job for running a playbook in an inventory.
+    
+    The optional limit (--limit for ansible) and tags (--tags for ansible)
+    arguments can have the same values as provided to Ansible.
+
+    Argument check (--check for ansible) is default true, but can be optionally
+    set to false.
+
+    The arguments is about the same as the ones the ansible commands use. As
+    such the command: boat job create site.yml production limit=webservers
+    will run: ansible-playbook -i production -l webservers site.yml in your
+    project.
+
+    Examples: boat job create site.yml production
+              boat job create update.yml test limit=webserver tags=config
+              boat job create webserver.yml staging check=false
+

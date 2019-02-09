@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+
+case "${ARGUMENT}" in
+"id")
+  api_curl_v2 GET "/jobs/$3" "project_id=${LONGBOAT_PROJECT}" || exit 1
+  echo_json "${CURL_RESPONSE}"
+  ;;
+
+"get")
+  api_curl_v2 GET "/jobs/$3" "project_id=${LONGBOAT_PROJECT}" || exit 1
+  echo_json "${CURL_RESPONSE}"
+  ;;
+
+"create")
+  api_curl_v2 POST /jobs "playbook=$3" "inventory=$4" "project_id=${LONGBOAT_PROJECT}" "$4" "$5" "$6" "$7" || exit 1
+  echo_json "${CURL_RESPONSE}"
+  ;;
+
+"agent")
+  while(true) ; do
+    "${BOATDIR}/boat" job run
+    sleep "${LONGBOAT_AGENT_WAIT}"
+  done
+  ;;
+
+"run")
+  # If agent name isn't set, use hostname
+  if [ -z "${LONGBOAT_AGENT_NAME}" ] ; then
+    LONGBOAT_AGENT_NAME=$(hostname)
+  fi
+
+  # Get a job from the queue (if there is any)
+  api_curl_v2 PUT "/jobs/queue/run" "agent_pid=$$" "agent_name=${LONGBOAT_AGENT_NAME}" "project_id=${LONGBOAT_PROJECT}" || exit 1
+
+  # Verify wether a job was returned or not
+  if ! echo "${CURL_RESPONSE}" | jq -rcMe .[0] > /dev/null ; then
+    exit 0
+  fi
+
+  # Parse json output for job data
+  JOB_ID=$(echo "${CURL_RESPONSE}" | jq -rcM .[0].id)
+  STATUS=$(echo "${CURL_RESPONSE}" | jq -rcM .[0].status)
+  PLAYBOOK=$(echo "${CURL_RESPONSE}" | jq -rcM .[0].playbook)
+  INVENTORY=$(echo "${CURL_RESPONSE}" | jq -rcM .[0].inventory)
+  CHECKMODE=$(echo "${CURL_RESPONSE}" | jq -rcM .[0].checkmode)
+  LIMIT=$(echo "${CURL_RESPONSE}" | jq -rcM .[0].limit)
+  TAGS=$(echo "${CURL_RESPONSE}" | jq -rcM .[0].tags)
+
+  info "Running job ${JOB_ID}"
+
+  # Input validation
+  # As we are retrieving data from external source, we really want to make some
+  # sort of input validation, before running it on the commandline!
+  if [[ ! "${STATUS}" =~ ^[a-z]+$ ]] ; then
+    error "Invalid status: ${STATUS}"
+    exit 1
+  fi
+  if [[ ! "${PLAYBOOK}" =~ ^[-_.a-zA-Z0-9]+$ ]] ; then
+    error "Invalid playbook: ${PLAYBOOK}"
+    exit 1
+  fi
+  if [[ ! "${INVENTORY}" =~ ^[-_.a-zA-Z0-9]+$ ]] ; then
+    error "Invalid inventory: ${INVENTORY}"
+    exit 1
+  fi
+  if [[ ! "${LIMIT}" =~ ^[-_.a-zA-Z0-9]+$ ]] ; then
+    error "Invalid limit: ${LIMIT}"
+    exit 1
+  fi
+  if [[ ! "${TAGS}" =~ ^[-_.a-zA-Z0-9]+$ ]] ; then
+    error "Invalid tags: ${TAGS}"
+    exit 1
+  fi
+
+  # Create tmpfile for job output
+  TMPFILE="/tmp/longboat.job.${JOB_ID}.$$"
+  touch "${TMPFILE}"
+  chmod 0600 "${TMPFILE}"
+
+  # Make sure inventory file exists
+  if [ -f "${INVENTORY}" ] ; then
+
+    # Build ansible-playbook arguments
+    if [ "${CHECKMODE}" == "false" ] ; then unset CHECKMODE ; fi
+    if [ "${LIMIT}" == "null" ] ; then unset LIMIT ; else LIMIT="--limit=${LIMIT}" ; fi
+    if [ "${TAGS}" == "null" ] ; then unset TAGS ; else TAGS="--tags=${TAGS}" ; fi  
+
+    # ansible-playbook command
+    PLAYBOOK_COMMAND="ansible-playbook --inventory=${INVENTORY} ${LIMIT+"$LIMIT"} ${TAGS+"$TAGS"} ${CHECKMODE+"--check"} ${PLAYBOOK}"
+    echo "command: ${PLAYBOOK_COMMAND}" >> "${TMPFILE}"
+
+    # Run ansible-playbook
+    if ANSIBLE_OUTPUT=$(ansible-playbook "--inventory=${INVENTORY}" ${LIMIT+"$LIMIT"} ${TAGS+"$TAGS"} ${CHECKMODE+"--check"} "${PLAYBOOK}") ; then
+      STATUS="success"
+    else
+      STATUS="failed"
+    fi
+
+    # Save output to tmpfile
+    echo "" >> "${TMPFILE}"
+    echo "${ANSIBLE_OUTPUT}" >> "${TMPFILE}"
+
+  else
+
+    STATUS="failed"
+    echo "Inventory file not found: ${INVENTORY}" >> "${TMPFILE}"
+
+  fi
+
+  # Update job status and output
+  api_curl_v2 PUT "/jobs/queue/status/${JOB_ID}" "status=${STATUS}" "project_id=${LONGBOAT_PROJECT}" "playbook_output@${TMPFILE}"
+
+  # Remove tmpfile
+  rm "${TMPFILE}"
+
+  if [ "${STATUS}" == "success" ] ; then
+    ok "Job ${JOB_ID} completed successfully"
+  else
+    error "Job ${JOB_ID} failed"
+  fi
+  ;;
+
+*)
+  echo "ERROR: Unknown job command! Try: boat job -h"
+  exit 1
+  ;;
+esac
+

@@ -50,6 +50,9 @@ case "${COMMAND}" in
 "inventory")
   # shellcheck source=bin/inventory
   source "${BOATDIR}/bin/inventory" ; exit $? ;;
+"job")
+  # shellcheck source=bin/job
+  source "${BOATDIR}/bin/job" ; exit $? ;;
 "init")
   # shellcheck source=bin/init
   source "${BOATDIR}/bin/init" ; exit $? ;;
