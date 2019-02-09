@@ -86,10 +86,23 @@ case "${COMMAND}" in
 "auth")
   # shellcheck source=bin/auth
   source "${BOATDIR}/bin/auth" ; exit $? ;;
+"version")
+  cd "${BOATDIR}" || exit 1
+  VERSION=$(git tag -l | tail -1)
+  info "Longboat CLI ${VERSION}"
+  space "https://github.com/longboatio/cli/releases"
+  ;;
 "upgrade")
-  echo "==> Pulling latest version of Longboat CLI..."
-  cd "${BOATDIR}" && git pull -q
-  echo "==> ...done! We highly recommend running: boat doctor"
+  cd "${BOATDIR}" || exit 1
+  CURRENT_VERSION=$(git tag -l | tail -1)
+  git pull -q || exit 1
+  NEW_VERSION=$(git tag -l | tail -1)
+  if [ "${CURRENT_VERSION}" == "${NEW_VERSION}" ] ; then
+    info "Already at latest version ${NEW_VERSION}"
+  else
+    ok "Longboat CLI upgraded from ${CURRENT_VERSION} to ${NEW_VERSION}"
+    space "We highly recommend running: boat doctor"
+  fi
   ;;
 *)
   # shellcheck source=bin/help
