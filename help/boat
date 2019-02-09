@@ -5,7 +5,8 @@ Usage:
 
 Commands:
   pull        Pull latest updates for local files and projects.
-  upgrade     Pull latest version of CLI tools.
+  version     Show Longboat CLI version.
+  upgrade     Upgrade to latest version of Longboat CLI.
   doctor      Check Longboat installation and project.
 
 User commands:
@@ -15,6 +16,7 @@ User commands:
 Project commands:
   init        Intialize a new project directory.
   project     Manage projects.
+  job         Manage jobs.
   env         Manage environments.
   host        Manage hosts.
   group       Manage host groups.
